@@ -1,0 +1,6 @@
+docs(setup): Add comprehensive README and configure gitignore
+
+- Created a detailed README.md containing step-by-step instructions for cloning and setting up both the frontend (React/Vite) and backend (Node/Express).
+- Added a root-level .gitignore file to exclude node_modules, build artifacts, environment variables, and IDE configuration files from version control.
+- Added Jalrakshak frontend and backend boilerplate code and initial configuration.
+- Added Jharkhand water contaminant research documents and related PDF generation scripts.

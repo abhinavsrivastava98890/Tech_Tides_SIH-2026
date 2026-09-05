@@ -32,13 +32,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       {/* Mobile overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-slate-900/80 md:hidden"
+          className="fixed inset-0 z-[9998] bg-slate-900/80 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
       
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-brand-navy text-slate-300 flex flex-col h-full border-r border-slate-800 transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-[9999] w-64 bg-brand-navy text-slate-300 flex flex-col h-full border-r border-slate-800 transition-transform duration-300 ease-in-out
         md:static md:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>

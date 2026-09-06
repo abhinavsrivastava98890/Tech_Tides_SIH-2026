@@ -6,12 +6,39 @@ import {
   Droplets, 
   Wrench 
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import KPICard from './components/KPICard';
 import NetworkStatusMap from './components/NetworkStatusMap';
 import LiveSitesTable from './components/LiveSitesTable';
 import RecentAlerts from './components/RecentAlerts';
+import { alertService, telemetryService } from '../../services/api';
 
 export default function Dashboard() {
+  const [activeAlertsCount, setActiveAlertsCount] = useState(3);
+  const [onlineUnits, setOnlineUnits] = useState(128);
+
+  useEffect(() => {
+    const fetchGlobalStats = async () => {
+      try {
+        const alertsRes = await alertService.getActive();
+        if (alertsRes.success) {
+          setActiveAlertsCount(alertsRes.data.length);
+        }
+        
+        // If we get telemetry from ESP32, increment online units by 1
+        const telRes = await telemetryService.getLatest();
+        if (telRes.success && telRes.data) {
+          setOnlineUnits(129); // 128 mock + 1 real ESP32
+        }
+      } catch (error) {
+        console.error('Failed to load global stats');
+      }
+    };
+
+    fetchGlobalStats();
+    const interval = setInterval(fetchGlobalStats, 10000);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-end space-y-2 sm:space-y-0">
@@ -27,9 +54,9 @@ export default function Dashboard() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
         <KPICard title="Total Sites" value="142" icon={Building2} colorClass="bg-brand-blue" />
-        <KPICard title="Online Units" value="128" icon={Wifi} colorClass="bg-status-safe" />
+        <KPICard title="Online Units" value={onlineUnits} icon={Wifi} colorClass="bg-status-safe" />
         <KPICard title="Offline Units" value="14" icon={WifiOff} colorClass="bg-status-offline" />
-        <KPICard title="Critical Alerts" value="3" icon={AlertOctagon} colorClass="bg-status-critical" />
+        <KPICard title="Critical Alerts" value={activeAlertsCount} icon={AlertOctagon} colorClass="bg-status-critical" />
         <KPICard title="Water Treated (Today)" value="2.4M" subtitle="Liters" icon={Droplets} colorClass="bg-brand-teal" />
         <KPICard title="Maintenance Due" value="12" icon={Wrench} colorClass="bg-status-maintenance" />
       </div>

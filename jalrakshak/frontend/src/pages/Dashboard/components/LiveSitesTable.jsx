@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { CheckCircle2, AlertTriangle, AlertOctagon, XCircle } from 'lucide-react';
+import { telemetryService } from '../../services/api';
 
-const mockTableData = [
-  { id: 'JR-DH-01', village: 'Baliapur', district: 'Dhanbad', source: 'Groundwater', unit: 'Online', water: 'Safe', active: 'Common + Fluoride' },
+const MOCK_SITES = [
   { id: 'JR-BK-04', village: 'Chas', district: 'Bokaro', source: 'Surface Water', unit: 'Warning', water: 'Safe', active: 'Common Only' },
   { id: 'JR-PL-02', village: 'Hussainabad', district: 'Palamu', source: 'Groundwater', unit: 'Online', water: 'Critical', active: 'Common + Iron' },
   { id: 'JR-SG-07', village: 'Barhait', district: 'Sahibganj', source: 'Groundwater', unit: 'Maintenance', water: 'Warning', active: 'Common + Arsenic' },
@@ -42,6 +43,51 @@ const StatusBadge = ({ status }) => {
 };
 
 export default function LiveSitesTable() {
+  const [sites, setSites] = useState(MOCK_SITES);
+  const [loading, setLoading] = useState(true);
+
+  const fetchTelemetry = async () => {
+    try {
+      const response = await telemetryService.getLatest();
+      if (response.success && response.data) {
+        const telemetry = response.data;
+        
+        // Map backend state to UI status
+        let waterStatus = 'Unknown';
+        if (telemetry.systemState === 'PASS' || telemetry.systemState === 'FILTRATION' || telemetry.systemState === 'UV_ACTIVE') {
+          waterStatus = 'Safe';
+        } else if (telemetry.systemState === 'REJECT' || telemetry.systemState === 'CRITICAL' || telemetry.systemState === 'FAULT') {
+          waterStatus = 'Critical';
+        } else {
+          waterStatus = 'Warning'; // Boot, Standby etc
+        }
+
+        const realSite = {
+          id: telemetry.deviceId,
+          village: 'Test Bench',
+          district: 'Lab',
+          source: 'Simulated',
+          unit: 'Online',
+          water: waterStatus,
+          active: 'ESP32 Node'
+        };
+
+        // Combine real site at the top with mock sites
+        setSites([realSite, ...MOCK_SITES]);
+      }
+    } catch (error) {
+      console.error('Failed to load telemetry data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTelemetry();
+    const interval = setInterval(fetchTelemetry, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
@@ -62,9 +108,12 @@ export default function LiveSitesTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
-            {mockTableData.map((row) => (
+            {sites.map((row) => (
               <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4 font-medium text-slate-900">{row.id}</td>
+                <td className="px-6 py-4 font-medium text-slate-900">
+                  {row.id}
+                  {row.district === 'Lab' && <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-brand-blue text-white">REAL</span>}
+                </td>
                 <td className="px-6 py-4">
                   <div>{row.village}</div>
                   <div className="text-xs text-slate-500">{row.district}</div>

@@ -20,6 +20,14 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true, message: 'JalRakshak API is running' });
 });
 
+// Import Routes
+const telemetryRoutes = require('./routes/telemetryRoutes');
+const alertRoutes = require('./routes/alertRoutes');
+
+// Use Routes
+app.use('/api/telemetry', telemetryRoutes);
+app.use('/api/alerts', alertRoutes);
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

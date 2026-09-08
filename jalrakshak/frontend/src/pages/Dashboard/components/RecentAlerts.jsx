@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AlertOctagon, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
-import { alertService } from '../../services/api';
+import { alertService } from '../../../services/api';
 
 export default function RecentAlerts() {
   const [alerts, setAlerts] = useState([]);

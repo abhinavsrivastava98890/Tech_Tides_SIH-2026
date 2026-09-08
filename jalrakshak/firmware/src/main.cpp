@@ -72,7 +72,7 @@ const char* WIFI_SSID       = "Abhinav";
 const char* WIFI_PASSWORD   = "abhinavv";
 
 // --- Backend API URL (change to your laptop's IP) ---
-const char* BACKEND_URL     = "http://10.204.62.230:5000/api";
+const char* BACKEND_URL     = "http://10.233.111.230:5000/api";
 
 // --- Timing Intervals (milliseconds) ---
 #define SENSOR_READ_INTERVAL    2000    // Read sensors every 2 seconds

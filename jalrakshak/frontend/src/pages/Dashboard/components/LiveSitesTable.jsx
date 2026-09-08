@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, AlertTriangle, AlertOctagon, XCircle } from 'lucide-react';
-import { telemetryService } from '../../services/api';
+import { telemetryService } from '../../../services/api';
 
 const MOCK_SITES = [
   { id: 'JR-BK-04', village: 'Chas', district: 'Bokaro', source: 'Surface Water', unit: 'Warning', water: 'Safe', active: 'Common Only' },

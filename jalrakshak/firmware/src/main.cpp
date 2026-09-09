@@ -268,7 +268,12 @@ float readTDS(float temperatureC) {
                 + 857.39 * compensatedVoltage) * 0.5;
 
     if (tds < 0) tds = 0;
-    return tds;
+    
+    // Applying custom calibration factor based on market TDS meter reference
+    // Reference TDS = 223, Our Reading = ~171. Factor = 223 / 171 = 1.304
+    float tds_calibration_factor = 1.304; 
+    
+    return tds * tds_calibration_factor;
 }
 
 // --- Flow Rate Calculation (from ISR pulse count) ---

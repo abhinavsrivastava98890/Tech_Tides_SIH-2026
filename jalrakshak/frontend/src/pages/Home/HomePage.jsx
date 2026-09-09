@@ -112,7 +112,11 @@ export default function HomePage() {
       }
     } catch (error) {
       console.error('Error subscribing to push notifications:', error);
-      alert('Error subscribing to notifications. Check console for details.');
+      if (error.name === 'AbortError' || error.message.includes('push service error')) {
+        alert('Push registration failed. If you are using Brave or Incognito mode, push notifications might be blocked by default. Please use Chrome/Edge or enable push services in your browser settings.');
+      } else {
+        alert('Error subscribing to notifications. Check console for details.');
+      }
     }
   };
 
@@ -188,19 +192,24 @@ export default function HomePage() {
       {/* TOP HEADER */}
       <header className="bg-[#6FA8C6] text-white px-8 py-4 flex justify-between items-center shadow-md z-10 shrink-0">
         <div className="flex items-center">
-          <Droplets className="text-white w-8 h-8 mr-3" />
+          <Droplets 
+            onClick={() => setShowAuth(true)} 
+            className="text-white w-8 h-8 mr-3 cursor-pointer hover:scale-105 transition-transform" 
+          />
           <div>
             <h1 className="text-2xl font-bold tracking-tight">JalRakshak</h1>
             <p className="text-slate-100 text-xs font-medium tracking-widest uppercase">Public Dashboard</p>
           </div>
         </div>
         
-        <button 
-          onClick={subscribeToPushNotifications}
-          className="bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-2 text-sm font-medium transition-colors px-5 py-2.5 rounded-lg shadow-sm"
-        >
-          <Bell className="w-4 h-4" /> Enable Notifications
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={subscribeToPushNotifications}
+            className="bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-2 text-sm font-medium transition-colors px-5 py-2.5 rounded-lg shadow-sm"
+          >
+            <Bell className="w-4 h-4" /> Enable Notifications
+          </button>
+        </div>
       </header>
 
       {/* MAIN CONTENT */}
@@ -231,13 +240,21 @@ export default function HomePage() {
 
           {/* Telemetry Section */}
           <section>
-            <div className="flex justify-between items-end mb-4">
-              <h2 className="text-lg font-semibold text-slate-800">Live Telemetry Readings</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-4">
+              <h2 className="text-xl font-bold text-slate-800 shrink-0">Live Telemetry Readings</h2>
               {lastUpdated && (
-                <p className="text-slate-500 text-sm font-medium flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                  Last synced: {lastUpdated.toLocaleTimeString()}
-                </p>
+                <div className="flex flex-col items-start sm:items-end bg-slate-200/50 px-3 py-1.5 rounded-lg border border-slate-200/60">
+                  {data && (data.timestamp || data.createdAt) && (
+                    <p className="text-slate-700 text-sm font-medium mb-1 flex items-center">
+                      <span className="text-slate-500 font-normal mr-1">Sensor Time:</span> 
+                      {new Date(data.timestamp || data.createdAt).toLocaleString()}
+                    </p>
+                  )}
+                  <p className="text-slate-500 text-[11px] font-semibold uppercase tracking-wider flex items-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 shadow-[0_0_4px_rgba(34,197,94,0.8)]"></span>
+                    Frontend Synced: {lastUpdated.toLocaleTimeString()}
+                  </p>
+                </div>
               )}
             </div>
             

@@ -71,7 +71,7 @@ export default function Dashboard() {
         <div className="lg:col-span-1 flex flex-col space-y-6">
           <RecentAlerts />
           
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 flex-1">
+          <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5 flex-1">
              <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-slate-800">System Health</h3>
              </div>

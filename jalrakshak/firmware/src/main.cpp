@@ -72,7 +72,7 @@ const char* WIFI_SSID       = "Abhinav";
 const char* WIFI_PASSWORD   = "abhinavv";
 
 // --- Backend API URL (change to your laptop's IP) ---
-const char* BACKEND_URL     = "http://10.233.111.230:5000/api";
+const char* BACKEND_URL     = "http://10.104.209.230:5000/api";
 
 // --- Timing Intervals (milliseconds) ---
 #define SENSOR_READ_INTERVAL    2000    // Read sensors every 2 seconds
@@ -540,8 +540,13 @@ void sendTelemetry() {
     int httpCode = http.POST(payload);
     if (httpCode >= 200 && httpCode < 300) {
         Serial.printf("[HTTP] Telemetry sent OK (%d)\n", httpCode);
+    } else if (httpCode < 0) {
+        // Negative codes = connection-level failure
+        Serial.printf("[HTTP] TELEMETRY CONNECTION FAILED (code %d)\n", httpCode);
+        Serial.println("       -1=REFUSED  -2=SEND_HEADER  -3=SEND_PAYLOAD  -4=NOT_CONNECTED  -5=LOST  -11=TIMEOUT");
+        Serial.printf("       Check: Is backend running at %s ?\n", BACKEND_URL);
     } else {
-        Serial.printf("[HTTP] Telemetry FAILED (HTTP %d): %s\n", httpCode, http.getString().c_str());
+        Serial.printf("[HTTP] Telemetry REJECTED (HTTP %d): %s\n", httpCode, http.getString().c_str());
     }
     http.end();
 }
@@ -585,8 +590,11 @@ void sendAlert(int severity, const String& faultName, const String& message) {
     int httpCode = http.POST(payload);
     if (httpCode >= 200 && httpCode < 300) {
         Serial.printf("[HTTP] Alert sent OK (%d) — %s\n", httpCode, severityStr.c_str());
+    } else if (httpCode < 0) {
+        Serial.printf("[HTTP] ALERT CONNECTION FAILED (code %d)\n", httpCode);
+        Serial.println("       -1=REFUSED  -2=SEND_HEADER  -3=SEND_PAYLOAD  -4=NOT_CONNECTED  -5=LOST  -11=TIMEOUT");
     } else {
-        Serial.printf("[HTTP] Alert FAILED (HTTP %d)\n", httpCode);
+        Serial.printf("[HTTP] Alert REJECTED (HTTP %d): %s\n", httpCode, http.getString().c_str());
     }
     http.end();
 }

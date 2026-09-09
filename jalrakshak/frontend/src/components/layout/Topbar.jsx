@@ -2,7 +2,7 @@ import { Search, MapPin, Wifi, Bell, Globe, User, Menu } from 'lucide-react';
 
 export default function Topbar({ onMenuClick }) {
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0">
+    <header className="h-16 bg-[#EFE9E1] border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0">
       
       {/* Search Bar & Mobile Menu */}
       <div className="flex-1 flex items-center">
@@ -19,7 +19,7 @@ export default function Topbar({ onMenuClick }) {
           <input
             type="text"
             placeholder="Search..."
-            className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-md leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-brand-blue focus:border-brand-blue text-sm transition-colors"
+            className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-md leading-5 bg-[#EFE9E1] placeholder-slate-400 focus:outline-none focus:bg-[#EFE9E1] focus:ring-1 focus:ring-brand-blue focus:border-brand-blue text-sm transition-colors"
           />
         </div>
       </div>

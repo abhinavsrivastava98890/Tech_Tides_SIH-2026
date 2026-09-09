@@ -1,6 +1,6 @@
 export default function KPICard({ title, value, subtitle, icon: Icon, colorClass }) {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-3 sm:p-5 flex items-center">
+    <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-3 sm:p-5 flex items-center">
       <div className={`p-2 sm:p-3 rounded-full ${colorClass} bg-opacity-10 mr-3 sm:mr-4`}>
         <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${colorClass.replace('bg-', 'text-')}`} />
       </div>

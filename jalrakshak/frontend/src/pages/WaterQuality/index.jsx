@@ -24,7 +24,7 @@ export default function WaterQuality() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-slate-200 px-6 rounded-t-lg shadow-sm">
+      <div className="bg-[#EFE9E1] border-b border-slate-200 px-6 rounded-t-lg shadow-sm">
         <nav className="flex space-x-6">
           <button
             onClick={() => setActiveTab('tests')}
@@ -45,10 +45,10 @@ export default function WaterQuality() {
         </nav>
       </div>
 
-      <div className="bg-white rounded-b-lg shadow-sm border border-slate-200 border-t-0 p-6">
+      <div className="bg-[#EFE9E1] rounded-b-lg shadow-sm border border-slate-200 border-t-0 p-6">
         <div className="flex justify-between mb-4">
           <div className="flex space-x-2">
-            <button className="px-3 py-1.5 border border-slate-300 rounded-md text-sm text-slate-600 flex items-center hover:bg-slate-50">
+            <button className="px-3 py-1.5 border border-slate-300 rounded-md text-sm text-slate-600 flex items-center hover:bg-[#EFE9E1]">
               <Filter className="w-4 h-4 mr-2" /> Filter
             </button>
             <select className="border border-slate-300 rounded-md text-sm px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-blue text-slate-600">
@@ -59,14 +59,14 @@ export default function WaterQuality() {
               <option>Nitrate</option>
             </select>
           </div>
-          <button className="px-3 py-1.5 border border-slate-300 rounded-md text-sm text-slate-600 flex items-center hover:bg-slate-50">
+          <button className="px-3 py-1.5 border border-slate-300 rounded-md text-sm text-slate-600 flex items-center hover:bg-[#EFE9E1]">
             <Download className="w-4 h-4 mr-2" /> Export
           </button>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-semibold">
+            <thead className="bg-[#EFE9E1] text-slate-500 uppercase text-xs font-semibold">
               <tr>
                 <th className="px-4 py-3 border-b">Test ID</th>
                 <th className="px-4 py-3 border-b">Site ID</th>
@@ -80,7 +80,7 @@ export default function WaterQuality() {
             </thead>
             <tbody className="divide-y divide-slate-200">
               {mockLabTests.map((test) => (
-                <tr key={test.id} className="hover:bg-slate-50">
+                <tr key={test.id} className="hover:bg-[#EFE9E1]">
                   <td className="px-4 py-4 font-medium text-slate-900">{test.id}</td>
                   <td className="px-4 py-4 text-brand-blue cursor-pointer hover:underline">{test.site}</td>
                   <td className="px-4 py-4 text-slate-600">{test.date}</td>

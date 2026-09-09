@@ -25,7 +25,7 @@ export default function RecentAlerts() {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+    <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-slate-800">Recent Alerts</h3>
         <button className="text-sm text-brand-blue font-medium hover:underline">View All</button>
@@ -58,7 +58,7 @@ export default function RecentAlerts() {
             const timeStr = new Date(alert.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             return (
-              <div key={alert._id} className="flex items-start p-3 rounded-md hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+              <div key={alert._id} className="flex items-start p-3 rounded-md hover:bg-[#EFE9E1] transition-colors border border-transparent hover:border-slate-100">
                 <div className={`p-2 rounded-full ${bgColor} mr-3 shrink-0`}>
                   <Icon className={`w-4 h-4 ${color}`} />
                 </div>

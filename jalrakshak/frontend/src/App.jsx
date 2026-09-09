@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
+import HomePage from './pages/Home/HomePage';
 import Dashboard from './pages/Dashboard';
 import LiveMonitoring from './pages/LiveMonitoring';
 import Sites from './pages/Sites';
@@ -10,12 +11,31 @@ import Maintenance from './pages/Maintenance';
 import Analytics from './pages/Analytics';
 import Admin from './pages/Admin';
 
+// Protected Route Wrapper
+const ProtectedRoute = ({ children }) => {
+  const isAuth = sessionStorage.getItem('supervisor_auth') === 'true';
+  const location = useLocation();
+
+  if (!isAuth) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+  return children;
+};
+
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+        {/* Public Home Page */}
+        <Route path="/" element={<HomePage />} />
+        
+        {/* Protected Supervisor Dashboard */}
+        <Route path="/supervisor" element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Navigate to="/supervisor/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="live" element={<LiveMonitoring />} />
           <Route path="sites" element={<Sites />} />
@@ -26,6 +46,9 @@ function App() {
           <Route path="analytics" element={<Analytics />} />
           <Route path="admin" element={<Admin />} />
         </Route>
+        
+        {/* Catch-all redirect */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

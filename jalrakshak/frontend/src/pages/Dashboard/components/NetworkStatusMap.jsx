@@ -23,7 +23,7 @@ export default function NetworkStatusMap() {
   const jharkhandCenter = [23.6102, 85.2799]; // Approximate center of Jharkhand
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+    <div className="bg-[#EFE9E1] p-4 rounded-lg shadow-sm border border-slate-200">
       <h3 className="text-lg font-semibold text-slate-800 mb-4">Network Status (Jharkhand)</h3>
       <div className="h-[400px] w-full rounded-md overflow-hidden border border-slate-200">
         <MapContainer center={jharkhandCenter} zoom={7} style={{ height: '100%', w: '100%' }}>

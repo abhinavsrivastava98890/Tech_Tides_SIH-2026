@@ -8,11 +8,12 @@ export default {
     extend: {
       colors: {
         brand: {
-          navy: '#0f172a',
+          navy: '#6FA8C6',
           blue: '#1e3a8a',
           teal: '#0d9488',
           light: '#f8fafc',
         },
+        themeLight: '#EFE9E1',
         status: {
           safe: '#22c55e', // Green
           warning: '#eab308', // Yellow

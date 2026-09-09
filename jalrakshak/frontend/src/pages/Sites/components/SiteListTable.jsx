@@ -42,7 +42,7 @@ export default function SiteListTable({ onSelectSite }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+    <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 overflow-hidden">
       <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="relative w-full sm:w-96">
           <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -57,7 +57,7 @@ export default function SiteListTable({ onSelectSite }) {
           />
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 bg-white hover:bg-slate-50">
+          <button className="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 bg-[#EFE9E1] hover:bg-[#EFE9E1]">
             <Filter className="w-4 h-4 mr-2" />
             Filters
           </button>
@@ -69,7 +69,7 @@ export default function SiteListTable({ onSelectSite }) {
 
       <div className="overflow-x-auto">
         <table className="w-full min-w-[900px] text-sm text-left whitespace-nowrap">
-          <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-semibold">
+          <thead className="bg-[#EFE9E1] text-slate-500 uppercase text-xs font-semibold">
             <tr>
               <th className="px-6 py-3">Site ID</th>
               <th className="px-6 py-3">Location</th>
@@ -83,7 +83,7 @@ export default function SiteListTable({ onSelectSite }) {
           </thead>
           <tbody className="divide-y divide-slate-200">
             {mockSites.filter(s => s.village.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase())).map((row) => (
-              <tr key={row.id} className="hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => onSelectSite(row)}>
+              <tr key={row.id} className="hover:bg-[#EFE9E1] transition-colors cursor-pointer" onClick={() => onSelectSite(row)}>
                 <td className="px-6 py-4 font-medium text-slate-900">{row.id}</td>
                 <td className="px-6 py-4">
                   <div className="font-medium">{row.village}</div>

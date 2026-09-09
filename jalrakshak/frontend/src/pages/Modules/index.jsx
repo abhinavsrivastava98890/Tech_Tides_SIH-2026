@@ -21,7 +21,7 @@ export default function Modules() {
           <h2 className="text-lg font-semibold text-slate-800">Installed Modules</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {modules.map(mod => (
-              <div key={mod.id} className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+              <div key={mod.id} className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center">
                     <div className="p-2 bg-brand-light rounded border border-slate-100 mr-3">
@@ -61,7 +61,7 @@ export default function Modules() {
         <div className="space-y-6">
           <h2 className="text-lg font-semibold text-slate-800">AI Recommendations</h2>
           
-          <div className="bg-brand-navy rounded-lg shadow-sm border border-slate-800 p-5 text-white">
+          <div className="bg-[#6FA8C6] rounded-lg shadow-sm border border-slate-800 p-5 text-white">
             <div className="flex items-center mb-4 text-brand-teal">
               <Zap className="w-5 h-5 mr-2" />
               <h3 className="font-semibold">Recommendation Engine</h3>
@@ -84,7 +84,7 @@ export default function Modules() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+          <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
             <h3 className="font-semibold text-slate-800 mb-3">Module Inventory</h3>
             <ul className="space-y-3 text-sm">
               <li className="flex justify-between items-center"><span className="text-slate-600">Available</span><span className="font-bold">42</span></li>

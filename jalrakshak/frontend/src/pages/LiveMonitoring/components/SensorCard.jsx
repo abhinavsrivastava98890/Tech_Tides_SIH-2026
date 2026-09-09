@@ -12,7 +12,7 @@ export default function SensorCard({ title, value, unit, normalRange, status, ti
     bgColor = 'bg-red-50 border-red-200';
   } else if (status === 'offline') {
     statusColor = 'text-status-offline';
-    bgColor = 'bg-slate-50 border-slate-200';
+    bgColor = 'bg-[#EFE9E1] border-slate-200';
   }
 
   let TrendIcon = Minus;

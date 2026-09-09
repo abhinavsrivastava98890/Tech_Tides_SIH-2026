@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Activity, 
@@ -9,23 +9,31 @@ import {
   Wrench, 
   BarChart3, 
   ShieldCheck,
-  X
+  X,
+  LogOut,
+  Home
 } from 'lucide-react';
 
 const menuItems = [
-  { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/live', icon: Activity, label: 'Live Monitoring' },
-  { path: '/sites', icon: MapPin, label: 'Sites & Sources' },
-  { path: '/quality', icon: Droplet, label: 'Water Quality' },
-  { path: '/modules', icon: Settings2, label: 'Treatment Modules' },
-  { path: '/alerts', icon: Bell, label: 'Alerts & Incidents' },
-  { path: '/maintenance', icon: Wrench, label: 'Maintenance' },
-  { path: '/analytics', icon: BarChart3, label: 'Analytics & Reports' },
-  { path: '/admin', icon: ShieldCheck, label: 'Administration' },
+  { path: '/supervisor/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { path: '/supervisor/live', icon: Activity, label: 'Live Monitoring' },
+  { path: '/supervisor/sites', icon: MapPin, label: 'Sites & Sources' },
+  { path: '/supervisor/quality', icon: Droplet, label: 'Water Quality' },
+  { path: '/supervisor/modules', icon: Settings2, label: 'Treatment Modules' },
+  { path: '/supervisor/alerts', icon: Bell, label: 'Alerts & Incidents' },
+  { path: '/supervisor/maintenance', icon: Wrench, label: 'Maintenance' },
+  { path: '/supervisor/analytics', icon: BarChart3, label: 'Analytics & Reports' },
+  { path: '/supervisor/admin', icon: ShieldCheck, label: 'Administration' },
 ];
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('supervisor_auth');
+    navigate('/');
+  };
 
   return (
     <>
@@ -38,7 +46,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       )}
       
       <aside className={`
-        fixed inset-y-0 left-0 z-[9999] w-64 bg-brand-navy text-slate-300 flex flex-col h-full border-r border-slate-800 transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-[9999] w-64 bg-[#6FA8C6] text-slate-300 flex flex-col h-full border-r border-slate-800 transition-transform duration-300 ease-in-out
         md:static md:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
@@ -81,9 +89,27 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </ul>
         </nav>
         
-        <div className="p-4 border-t border-slate-800 text-xs text-slate-500 shrink-0">
-          <p>JalRakshak Platform</p>
-          <p>v1.0.0 (Production)</p>
+        <div className="p-4 border-t border-slate-800 shrink-0">
+          <div className="space-y-2 mb-4">
+            <Link 
+              to="/"
+              className="flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors"
+            >
+              <Home className="w-4 h-4 mr-3 shrink-0 text-slate-400" />
+              Public Home Page
+            </Link>
+            <button 
+              onClick={handleLogout}
+              className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-red-900/30 hover:text-red-400 transition-colors text-left"
+            >
+              <LogOut className="w-4 h-4 mr-3 shrink-0 text-slate-400" />
+              Lock Session
+            </button>
+          </div>
+          <div className="text-xs text-slate-500">
+            <p>JalRakshak Platform</p>
+            <p>v2.0.0 (Production)</p>
+          </div>
         </div>
       </aside>
     </>

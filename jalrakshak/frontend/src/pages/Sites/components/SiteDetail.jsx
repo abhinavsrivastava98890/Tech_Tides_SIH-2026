@@ -17,7 +17,7 @@ export default function SiteDetail({ site, onBack }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center">
+      <div className="bg-[#EFE9E1] border-b border-slate-200 px-6 py-4 flex items-center">
         <button onClick={onBack} className="mr-4 text-slate-500 hover:text-slate-800 transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -36,7 +36,7 @@ export default function SiteDetail({ site, onBack }) {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-slate-200 px-6">
+      <div className="bg-[#EFE9E1] border-b border-slate-200 px-6">
         <nav className="flex space-x-6 overflow-x-auto">
           {tabs.map((tab) => (
             <button
@@ -58,7 +58,7 @@ export default function SiteDetail({ site, onBack }) {
       <div className="flex-1 p-4 md:p-6 overflow-y-auto">
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+            <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
               <h3 className="text-base font-semibold text-slate-800 mb-4 border-b pb-2">Site Information</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -80,10 +80,10 @@ export default function SiteDetail({ site, onBack }) {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+            <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
               <h3 className="text-base font-semibold text-slate-800 mb-4 border-b pb-2">Current Configuration</h3>
               <div className="space-y-3">
-                <div className="flex items-center text-sm p-2 bg-slate-50 rounded border border-slate-100">
+                <div className="flex items-center text-sm p-2 bg-[#EFE9E1] rounded border border-slate-100">
                   <Activity className="w-4 h-4 mr-2 text-brand-blue" />
                   <span className="font-medium text-slate-700">Common Filtration Module</span>
                 </div>
@@ -91,14 +91,14 @@ export default function SiteDetail({ site, onBack }) {
                   <Settings className="w-4 h-4 mr-2 text-brand-blue" />
                   <span className="font-medium text-blue-900">Fluoride Removal Module (Activated Alumina)</span>
                 </div>
-                <div className="flex items-center text-sm p-2 bg-slate-50 rounded border border-slate-100">
+                <div className="flex items-center text-sm p-2 bg-[#EFE9E1] rounded border border-slate-100">
                   <Activity className="w-4 h-4 mr-2 text-brand-blue" />
                   <span className="font-medium text-slate-700">UV Disinfection</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+            <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
                <h3 className="text-base font-semibold text-slate-800 mb-4 border-b pb-2">Maintenance Status</h3>
                <div className="space-y-4">
                  <div>

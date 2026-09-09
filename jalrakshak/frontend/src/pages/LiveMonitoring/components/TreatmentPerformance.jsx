@@ -2,7 +2,7 @@ import { Droplets } from 'lucide-react';
 
 export default function TreatmentPerformance({ parameter, inlet, outlet, unit, removalPercent, isWarning = false }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+    <div className="bg-[#EFE9E1] border border-slate-200 rounded-lg p-4 shadow-sm">
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-semibold text-slate-700 flex items-center">
           <Droplets className="w-4 h-4 mr-2 text-brand-teal" />

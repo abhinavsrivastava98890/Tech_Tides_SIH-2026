@@ -6,7 +6,7 @@ export default function Sites() {
   const [selectedSite, setSelectedSite] = useState(null);
 
   return (
-    <div className="h-full bg-slate-50">
+    <div className="h-full bg-[#EFE9E1]">
       {selectedSite ? (
         <SiteDetail site={selectedSite} onBack={() => setSelectedSite(null)} />
       ) : (

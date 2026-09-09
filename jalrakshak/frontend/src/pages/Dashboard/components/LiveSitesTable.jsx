@@ -89,14 +89,14 @@ export default function LiveSitesTable() {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+    <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
         <h3 className="text-lg font-semibold text-slate-800">Live Sites</h3>
         <button className="text-sm text-brand-blue font-medium hover:underline">View All</button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
-          <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-semibold">
+          <thead className="bg-[#EFE9E1] text-slate-500 uppercase text-xs font-semibold">
             <tr>
               <th className="px-6 py-3">Site ID</th>
               <th className="px-6 py-3">Village / District</th>
@@ -109,7 +109,7 @@ export default function LiveSitesTable() {
           </thead>
           <tbody className="divide-y divide-slate-200">
             {sites.map((row) => (
-              <tr key={row.id} className="hover:bg-slate-50 transition-colors">
+              <tr key={row.id} className="hover:bg-[#EFE9E1] transition-colors">
                 <td className="px-6 py-4 font-medium text-slate-900">
                   {row.id}
                   {row.district === 'Lab' && <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-brand-blue text-white">REAL</span>}

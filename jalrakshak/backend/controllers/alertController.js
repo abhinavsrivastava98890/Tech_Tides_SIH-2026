@@ -4,8 +4,18 @@ const twilioService = require('../services/twilioService');
 // POST /api/alerts
 exports.addAlert = async (req, res) => {
     try {
+        console.log('[ALERT] Received from device:', req.body.deviceId || 'UNKNOWN');
+        console.log('[ALERT] Payload:', JSON.stringify(req.body));
+
+        // Validate required fields
+        if (!req.body.deviceId || !req.body.alertId || !req.body.severity || !req.body.message) {
+            console.warn('[ALERT] REJECTED — missing required fields');
+            return res.status(400).json({ success: false, error: 'Missing required alert fields' });
+        }
+
         const alertData = new Alert(req.body);
         await alertData.save();
+        console.log('[ALERT] ✅ Saved to DB — ID:', alertData._id, 'Severity:', alertData.severity);
         
         // Trigger Twilio SMS and Voice Call for severe alerts
         if (alertData.severity === 'CRITICAL') {
@@ -17,10 +27,10 @@ exports.addAlert = async (req, res) => {
             await twilioService.sendSMS(message);
         }
 
-        res.status(201).json({ success: true, message: 'Alert saved' });
+        res.status(201).json({ success: true, message: 'Alert saved', id: alertData._id });
     } catch (error) {
-        console.error('Error saving alert:', error);
-        res.status(500).json({ success: false, error: 'Server Error' });
+        console.error('[ALERT] ❌ Error saving:', error.message);
+        res.status(500).json({ success: false, error: 'Server Error', details: error.message });
     }
 };
 

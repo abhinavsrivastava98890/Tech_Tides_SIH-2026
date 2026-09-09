@@ -10,7 +10,7 @@ export default function DeviceHealth() {
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+    <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
       <h3 className="text-lg font-semibold text-slate-800 mb-4">Device Health</h3>
       <div className="space-y-4">
         {components.map((comp, i) => {
@@ -18,7 +18,7 @@ export default function DeviceHealth() {
           return (
             <div key={i} className="flex items-center justify-between">
               <div className="flex items-center">
-                <div className={`p-2 rounded-full bg-slate-50 mr-3`}>
+                <div className={`p-2 rounded-full bg-[#EFE9E1] mr-3`}>
                   <Icon className={`w-4 h-4 ${comp.color}`} />
                 </div>
                 <span className="text-sm font-medium text-slate-700">{comp.name}</span>

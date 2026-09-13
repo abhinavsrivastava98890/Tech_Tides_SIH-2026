@@ -5,9 +5,12 @@
 This project is a comprehensive solution designed to monitor and purify water quality in vulnerable regions.
 
 ## Project Structure
-The repository is divided into two main parts:
+The repository is divided into main parts:
 - `backend/`: Node.js + Express backend with MongoDB (Mongoose) integration.
 - `frontend/`: React application built with Vite and styled using Tailwind CSS.
+- `hardware/`: IoT and Firmware code.
+- `docs/`: Research documents and related scripts.
+- `presentation/`: Pitch decks and SIH presentation materials.
 
 ---
 
@@ -32,12 +35,12 @@ cd SIH-2026
 Navigate to the backend directory, install the required dependencies, and start the backend server.
 
 ```bash
-cd jalrakshak/backend
+cd backend
 npm install
 ```
 
 **Environment Variables:**
-Create a `.env` file in the `jalrakshak/backend/` directory and configure the necessary environment variables. Example:
+Create a `.env` file in the `backend/` directory and configure the necessary environment variables. Example:
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
@@ -54,12 +57,12 @@ node server.js
 Open a new terminal window or tab, navigate to the frontend directory, install dependencies, and start the Vite development server.
 
 ```bash
-cd jalrakshak/frontend
+cd frontend
 npm install
 ```
 
 **Environment Variables:**
-If your frontend needs to connect to the backend, create a `.env` file in the `jalrakshak/frontend/` directory:
+If your frontend needs to connect to the backend, create a `.env` file in the `frontend/` directory:
 ```env
 VITE_API_URL=http://localhost:5000
 ```

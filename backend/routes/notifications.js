@@ -31,6 +31,22 @@ router.post('/subscribe', async (req, res) => {
   }
 });
 
+// Route to unsubscribe a client
+router.delete('/unsubscribe', async (req, res) => {
+  try {
+    const { endpoint } = req.body;
+    if (!endpoint) {
+      return res.status(400).json({ success: false, error: 'Endpoint is required' });
+    }
+    
+    await PushSubscription.deleteOne({ endpoint });
+    res.status(200).json({ success: true, message: 'Unsubscribed successfully.' });
+  } catch (error) {
+    console.error('Error unsubscribing:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
+
 // Route for testing notifications
 router.post('/test', async (req, res) => {
   try {

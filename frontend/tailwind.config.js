@@ -7,20 +7,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          navy: '#6FA8C6',
-          blue: '#1e3a8a',
-          teal: '#0d9488',
-          light: '#f8fafc',
-        },
-        themeLight: '#EFE9E1',
-        status: {
-          safe: '#22c55e', // Green
-          warning: '#eab308', // Yellow
-          maintenance: '#f97316', // Orange
-          critical: '#ef4444', // Red
-          offline: '#94a3b8', // Grey
+        background: '#fffff2',
+        card: '#FFFFEB',
+        primary: '#164A63',
+        teal: '#287D7B',
+        water: '#5B9DB5',
+        success: '#22C55E',
+        warning: '#F59E0B',
+        danger: '#EF4444',
+        text: '#263238',
+        muted: '#687477',
+        border: '#D8D0C6',
+        accent: '#6ab2f9',
+        blue: {
+          500: '#6ab2f9'
         }
+      },
+      ringColor: {
+        DEFAULT: '#6ab2f9',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

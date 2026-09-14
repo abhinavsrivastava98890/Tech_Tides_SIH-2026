@@ -4,18 +4,18 @@ export default function WaterSafetyStatus({ status = 'safe' }) {
   let Icon = ShieldCheck;
   let text = "SAFE TO DRINK";
   let hindiText = "पानी सुरक्षित है";
-  let colorClass = "bg-status-safe text-white";
+  let colorClass = "bg-success text-white";
   
   if (status === 'warning') {
     Icon = AlertTriangle;
     text = "ATTENTION REQUIRED";
     hindiText = "फ़िल्टर की जाँच आवश्यक है";
-    colorClass = "bg-status-warning text-slate-900";
+    colorClass = "bg-warning text-text";
   } else if (status === 'critical') {
     Icon = ShieldAlert;
     text = "DO NOT DRINK";
     hindiText = "सावधान! यह पानी पीने के लिए सुरक्षित नहीं है।";
-    colorClass = "bg-status-critical text-white";
+    colorClass = "bg-danger text-white";
   } else if (status === 'offline') {
     Icon = WifiOff;
     text = "SENSOR OFFLINE";

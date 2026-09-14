@@ -7,7 +7,7 @@ export default function MainLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-brand-light">
+    <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <div className="flex flex-col flex-1 w-full overflow-hidden">
         <Topbar onMenuClick={() => setIsSidebarOpen(true)} />

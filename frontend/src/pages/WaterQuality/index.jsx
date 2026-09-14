@@ -15,21 +15,21 @@ export default function WaterQuality() {
     <div className="p-6 max-w-7xl mx-auto h-full overflow-y-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Water Quality Profiles</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage specialized lab & field water tests for contaminants.</p>
+          <h1 className="text-2xl font-bold text-text">Water Quality Profiles</h1>
+          <p className="text-sm text-muted mt-1">Manage specialized lab & field water tests for contaminants.</p>
         </div>
-        <button className="mt-4 md:mt-0 px-4 py-2 bg-brand-blue text-white rounded-md text-sm font-medium hover:bg-blue-800 transition-colors flex items-center">
+        <button className="mt-4 md:mt-0 px-4 py-2 bg-accent text-white rounded-md text-sm font-medium hover:bg-accent/90 transition-colors flex items-center">
           <Plus className="w-4 h-4 mr-2" /> Add Water Test
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="bg-[#EFE9E1] border-b border-slate-200 px-6 rounded-t-lg shadow-sm">
+      <div className="bg-card border-b border-border px-6 rounded-t-lg shadow-sm">
         <nav className="flex space-x-6">
           <button
             onClick={() => setActiveTab('tests')}
             className={`py-4 px-1 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'tests' ? 'border-brand-blue text-brand-blue' : 'border-transparent text-slate-500 hover:text-slate-700'
+              activeTab === 'tests' ? 'border-accent text-primary' : 'border-transparent text-muted hover:text-slate-700'
             }`}
           >
             Specialized Test Results
@@ -37,7 +37,7 @@ export default function WaterQuality() {
           <button
             onClick={() => setActiveTab('profiles')}
             className={`py-4 px-1 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'profiles' ? 'border-brand-blue text-brand-blue' : 'border-transparent text-slate-500 hover:text-slate-700'
+              activeTab === 'profiles' ? 'border-accent text-primary' : 'border-transparent text-muted hover:text-slate-700'
             }`}
           >
             Source Contamination Profiles
@@ -45,13 +45,13 @@ export default function WaterQuality() {
         </nav>
       </div>
 
-      <div className="bg-[#EFE9E1] rounded-b-lg shadow-sm border border-slate-200 border-t-0 p-6">
+      <div className="bg-card rounded-b-lg shadow-sm border border-border border-t-0 p-6">
         <div className="flex justify-between mb-4">
           <div className="flex space-x-2">
-            <button className="px-3 py-1.5 border border-slate-300 rounded-md text-sm text-slate-600 flex items-center hover:bg-[#EFE9E1]">
+            <button className="px-3 py-1.5 border border-border rounded-md text-sm text-muted flex items-center hover:bg-card">
               <Filter className="w-4 h-4 mr-2" /> Filter
             </button>
-            <select className="border border-slate-300 rounded-md text-sm px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-blue text-slate-600">
+            <select className="border border-border rounded-md text-sm px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent text-muted">
               <option>All Parameters</option>
               <option>Fluoride</option>
               <option>Arsenic</option>
@@ -59,14 +59,14 @@ export default function WaterQuality() {
               <option>Nitrate</option>
             </select>
           </div>
-          <button className="px-3 py-1.5 border border-slate-300 rounded-md text-sm text-slate-600 flex items-center hover:bg-[#EFE9E1]">
+          <button className="px-3 py-1.5 border border-border rounded-md text-sm text-muted flex items-center hover:bg-card">
             <Download className="w-4 h-4 mr-2" /> Export
           </button>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-[#EFE9E1] text-slate-500 uppercase text-xs font-semibold">
+            <thead className="bg-card text-muted uppercase text-xs font-semibold">
               <tr>
                 <th className="px-4 py-3 border-b">Test ID</th>
                 <th className="px-4 py-3 border-b">Site ID</th>
@@ -78,15 +78,15 @@ export default function WaterQuality() {
                 <th className="px-4 py-3 border-b">Report</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-border">
               {mockLabTests.map((test) => (
-                <tr key={test.id} className="hover:bg-[#EFE9E1]">
-                  <td className="px-4 py-4 font-medium text-slate-900">{test.id}</td>
-                  <td className="px-4 py-4 text-brand-blue cursor-pointer hover:underline">{test.site}</td>
-                  <td className="px-4 py-4 text-slate-600">{test.date}</td>
+                <tr key={test.id} className="hover:bg-card">
+                  <td className="px-4 py-4 font-medium text-text">{test.id}</td>
+                  <td className="px-4 py-4 text-primary cursor-pointer hover:underline">{test.site}</td>
+                  <td className="px-4 py-4 text-muted">{test.date}</td>
                   <td className="px-4 py-4 font-medium text-slate-800">{test.parameter}</td>
-                  <td className="px-4 py-4 text-right font-semibold">{test.result} <span className="text-xs font-normal text-slate-500">{test.unit}</span></td>
-                  <td className="px-4 py-4 text-right text-slate-500">{test.limit} <span className="text-xs">{test.unit}</span></td>
+                  <td className="px-4 py-4 text-right font-semibold">{test.result} <span className="text-xs font-normal text-muted">{test.unit}</span></td>
+                  <td className="px-4 py-4 text-right text-muted">{test.limit} <span className="text-xs">{test.unit}</span></td>
                   <td className="px-4 py-4 text-center">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                       test.status === 'Safe' ? 'bg-green-100 text-green-700' :
@@ -96,7 +96,7 @@ export default function WaterQuality() {
                       {test.status}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-slate-400 hover:text-brand-blue cursor-pointer">
+                  <td className="px-4 py-4 text-slate-400 hover:text-primary cursor-pointer">
                     <FileText className="w-5 h-5" />
                   </td>
                 </tr>
@@ -105,9 +105,9 @@ export default function WaterQuality() {
           </table>
         </div>
         
-        <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-4 flex">
-           <Droplet className="w-6 h-6 text-brand-blue mr-3 shrink-0" />
-           <p className="text-sm text-blue-900">
+        <div className="mt-8 bg-accent/10 border border-accent/20 rounded-lg p-4 flex">
+           <Droplet className="w-6 h-6 text-primary mr-3 shrink-0" />
+           <p className="text-sm text-primary">
              <strong>Note:</strong> Live sensors (pH, TDS, Turbidity) cannot directly measure complex contaminants like Fluoride or Arsenic. 
              This table relies on periodic field test kits or laboratory analysis data entered by technicians.
            </p>

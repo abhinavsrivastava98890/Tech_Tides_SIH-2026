@@ -12,7 +12,7 @@ export default function Alerts() {
   const [selectedAlert, setSelectedAlert] = useState(mockAlerts[0]);
 
   const SeverityBadge = ({ severity }) => {
-    let color = 'bg-blue-100 text-blue-700';
+    let color = 'bg-accent/20 text-accent';
     let Icon = Info;
     
     if (severity === 'Critical') { color = 'bg-red-100 text-red-700'; Icon = AlertOctagon; }
@@ -27,23 +27,23 @@ export default function Alerts() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#EFE9E1]">
-      <div className="px-6 py-5 border-b border-slate-200 bg-[#EFE9E1] shrink-0">
-        <h1 className="text-2xl font-bold text-slate-900">Alerts & Incidents</h1>
-        <p className="text-sm text-slate-500 mt-1">Manage system alerts and automated incident responses.</p>
+    <div className="flex flex-col h-full bg-card">
+      <div className="px-6 py-5 border-b border-border bg-card shrink-0">
+        <h1 className="text-2xl font-bold text-text">Alerts & Incidents</h1>
+        <p className="text-sm text-muted mt-1">Manage system alerts and automated incident responses.</p>
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Alert List */}
-        <div className="w-full md:w-2/5 h-1/2 md:h-auto flex flex-col border-b md:border-b-0 md:border-r border-slate-200 bg-[#EFE9E1] shrink-0 md:shrink">
-          <div className="p-4 border-b border-slate-200 flex space-x-2">
+        <div className="w-full md:w-2/5 h-1/2 md:h-auto flex flex-col border-b md:border-b-0 md:border-r border-border bg-card shrink-0 md:shrink">
+          <div className="p-4 border-b border-border flex space-x-2">
              <div className="relative flex-1">
                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                  <Search className="h-4 w-4 text-slate-400" />
                </span>
-               <input type="text" placeholder="Search alerts..." className="w-full pl-10 pr-3 py-1.5 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-brand-blue" />
+               <input type="text" placeholder="Search alerts..." className="w-full pl-10 pr-3 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-accent" />
              </div>
-             <button className="px-3 py-1.5 border border-slate-200 rounded-md bg-[#EFE9E1] text-slate-600 hover:bg-slate-100">
+             <button className="px-3 py-1.5 border border-border rounded-md bg-card text-muted hover:bg-slate-100">
                <Filter className="w-4 h-4" />
              </button>
           </div>
@@ -53,17 +53,17 @@ export default function Alerts() {
               <div 
                 key={alert.id}
                 onClick={() => setSelectedAlert(alert)}
-                className={`p-4 border-b border-slate-100 cursor-pointer transition-colors ${selectedAlert.id === alert.id ? 'bg-blue-50 border-l-4 border-l-brand-blue' : 'hover:bg-[#EFE9E1] border-l-4 border-l-transparent'}`}
+                className={`p-4 border-b border-slate-100 cursor-pointer transition-colors ${selectedAlert.id === alert.id ? 'bg-accent/10 border-l-4 border-l-accent' : 'hover:bg-card border-l-4 border-l-transparent'}`}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs font-semibold text-slate-500">{alert.id}</span>
+                  <span className="text-xs font-semibold text-muted">{alert.id}</span>
                   <SeverityBadge severity={alert.severity} />
                 </div>
-                <h3 className="text-sm font-semibold text-slate-900 mb-1">{alert.parameter} Issue</h3>
-                <p className="text-xs text-slate-600 mb-2 truncate">{alert.site}</p>
+                <h3 className="text-sm font-semibold text-text mb-1">{alert.parameter} Issue</h3>
+                <p className="text-xs text-muted mb-2 truncate">{alert.site}</p>
                 <div className="flex justify-between items-center text-xs text-slate-400">
                   <span className="flex items-center"><Clock className="w-3 h-3 mr-1"/> {alert.time}</span>
-                  <span className={`px-2 py-0.5 rounded-full ${alert.status === 'Unassigned' ? 'bg-slate-100' : alert.status === 'Resolved' ? 'bg-green-100 text-green-700' : 'bg-brand-blue text-white'}`}>
+                  <span className={`px-2 py-0.5 rounded-full ${alert.status === 'Unassigned' ? 'bg-slate-100' : alert.status === 'Resolved' ? 'bg-green-100 text-green-700' : 'bg-accent text-white'}`}>
                     {alert.status}
                   </span>
                 </div>
@@ -73,10 +73,10 @@ export default function Alerts() {
         </div>
 
         {/* Alert Detail */}
-        <div className="flex-1 overflow-y-auto p-6 bg-[#EFE9E1]">
+        <div className="flex-1 overflow-y-auto p-6 bg-card">
           {selectedAlert ? (
-            <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-              <div className="p-6 border-b border-slate-200 bg-slate-900 text-white">
+            <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+              <div className="p-6 border-b border-border bg-slate-900 text-white">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h2 className="text-2xl font-bold">{selectedAlert.parameter} Alert</h2>
@@ -93,13 +93,13 @@ export default function Alerts() {
 
               <div className="p-4 sm:p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
-                  <div className="p-4 bg-[#EFE9E1] rounded border border-slate-100">
-                    <p className="text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Location</p>
-                    <p className="font-medium text-slate-900">{selectedAlert.site}</p>
+                  <div className="p-4 bg-card rounded border border-slate-100">
+                    <p className="text-xs text-muted mb-1 uppercase tracking-wider font-semibold">Location</p>
+                    <p className="font-medium text-text">{selectedAlert.site}</p>
                   </div>
-                  <div className="p-4 bg-[#EFE9E1] rounded border border-slate-100">
-                    <p className="text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Automated Action Taken</p>
-                    <p className="font-medium text-slate-900">{selectedAlert.severity === 'Critical' ? 'Water Dispensing Shutoff' : 'Notification Sent'}</p>
+                  <div className="p-4 bg-card rounded border border-slate-100">
+                    <p className="text-xs text-muted mb-1 uppercase tracking-wider font-semibold">Automated Action Taken</p>
+                    <p className="font-medium text-text">{selectedAlert.severity === 'Critical' ? 'Water Dispensing Shutoff' : 'Notification Sent'}</p>
                   </div>
                   <div className="p-4 bg-red-50 rounded border border-red-100">
                     <p className="text-xs text-red-500 mb-1 uppercase tracking-wider font-semibold">Current Value</p>
@@ -111,16 +111,16 @@ export default function Alerts() {
                   </div>
                 </div>
 
-                <div className="border-t border-slate-200 pt-6">
+                <div className="border-t border-border pt-6">
                   <h3 className="font-semibold text-slate-800 mb-4">Incident Actions</h3>
                   <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
-                    <button className="w-full md:w-auto px-4 py-2 bg-brand-blue text-white rounded-md text-sm font-medium hover:bg-blue-800 transition-colors">
+                    <button className="w-full md:w-auto px-4 py-2 bg-accent text-white rounded-md text-sm font-medium hover:bg-accent/90 transition-colors">
                       Acknowledge
                     </button>
-                    <button className="w-full md:w-auto px-4 py-2 bg-[#EFE9E1] border border-slate-300 text-slate-700 rounded-md text-sm font-medium hover:bg-[#EFE9E1] transition-colors">
+                    <button className="w-full md:w-auto px-4 py-2 bg-card border border-border text-slate-700 rounded-md text-sm font-medium hover:bg-card transition-colors">
                       Assign Technician
                     </button>
-                    <button className="w-full md:w-auto px-4 py-2 bg-[#EFE9E1] border border-slate-300 text-slate-700 rounded-md text-sm font-medium hover:bg-[#EFE9E1] transition-colors text-red-600 hover:text-red-700 hover:border-red-300">
+                    <button className="w-full md:w-auto px-4 py-2 bg-card border border-border text-slate-700 rounded-md text-sm font-medium hover:bg-card transition-colors text-red-600 hover:text-red-700 hover:border-red-300">
                       Escalate
                     </button>
                     <div className="hidden md:block flex-1"></div>

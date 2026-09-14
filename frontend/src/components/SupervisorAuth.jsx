@@ -18,7 +18,7 @@ export default function SupervisorAuth({ onAuthSuccess, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className={`bg-[#EFE9E1] rounded-2xl shadow-xl w-full max-w-md overflow-hidden transition-transform ${error ? 'animate-shake' : ''}`}>
+      <div className={`bg-card rounded-2xl shadow-xl w-full max-w-md overflow-hidden transition-transform ${error ? 'animate-shake' : ''}`}>
         <div className="bg-[#6FA8C6] p-6 relative">
           {onClose && (
             <button 
@@ -28,8 +28,8 @@ export default function SupervisorAuth({ onAuthSuccess, onClose }) {
               <X className="w-5 h-5" />
             </button>
           )}
-          <div className="w-12 h-12 bg-[#EFE9E1]/10 rounded-full flex items-center justify-center mb-4">
-            <Lock className="w-6 h-6 text-brand-teal" />
+          <div className="w-12 h-12 bg-card/10 rounded-full flex items-center justify-center mb-4">
+            <Lock className="w-6 h-6 text-teal" />
           </div>
           <h2 className="text-2xl font-bold text-white">Supervisor Access</h2>
           <p className="text-slate-300 mt-1 text-sm">Enter password to access the JalRakshak dashboard.</p>
@@ -45,7 +45,7 @@ export default function SupervisorAuth({ onAuthSuccess, onClose }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                error ? 'border-red-500 focus:ring-red-200' : 'border-slate-300 focus:ring-brand-blue/20 focus:border-brand-blue'
+                error ? 'border-red-500 focus:ring-red-200' : 'border-border focus:ring-accent/20 focus:border-accent'
               }`}
               placeholder="••••••••"
               autoFocus
@@ -57,7 +57,7 @@ export default function SupervisorAuth({ onAuthSuccess, onClose }) {
           
           <button
             type="submit"
-            className="w-full bg-brand-blue hover:bg-blue-800 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center group"
+            className="w-full bg-accent hover:bg-accent/90 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center group"
           >
             Access Dashboard
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />

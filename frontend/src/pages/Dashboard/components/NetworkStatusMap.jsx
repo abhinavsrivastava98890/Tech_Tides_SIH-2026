@@ -23,9 +23,9 @@ export default function NetworkStatusMap() {
   const jharkhandCenter = [23.6102, 85.2799]; // Approximate center of Jharkhand
 
   return (
-    <div className="bg-[#EFE9E1] p-4 rounded-lg shadow-sm border border-slate-200">
+    <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
       <h3 className="text-lg font-semibold text-slate-800 mb-4">Network Status (Jharkhand)</h3>
-      <div className="h-[400px] w-full rounded-md overflow-hidden border border-slate-200">
+      <div className="h-[400px] w-full rounded-md overflow-hidden border border-border">
         <MapContainer center={jharkhandCenter} zoom={7} style={{ height: '100%', w: '100%' }}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -36,18 +36,18 @@ export default function NetworkStatusMap() {
               <Popup>
                 <div className="text-sm">
                   <p className="font-semibold">{site.name}</p>
-                  <p className="capitalize text-slate-600">Status: {site.status}</p>
+                  <p className="capitalize text-muted">Status: {site.status}</p>
                 </div>
               </Popup>
             </Marker>
           ))}
         </MapContainer>
       </div>
-      <div className="flex gap-4 mt-4 text-sm text-slate-600">
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-status-safe mr-2"></span>Normal</span>
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-status-warning mr-2"></span>Warning</span>
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-status-maintenance mr-2"></span>Maintenance</span>
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-status-critical mr-2"></span>Critical</span>
+      <div className="flex gap-4 mt-4 text-sm text-muted">
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-success mr-2"></span>Normal</span>
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-warning mr-2"></span>Warning</span>
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-warning mr-2"></span>Maintenance</span>
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-danger mr-2"></span>Critical</span>
         <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-status-offline mr-2"></span>Offline</span>
       </div>
     </div>

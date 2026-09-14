@@ -1,4 +1,4 @@
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Bell } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import SensorCard from './components/SensorCard';
 import WaterSafetyStatus from './components/WaterSafetyStatus';
@@ -6,6 +6,7 @@ import TreatmentPerformance from './components/TreatmentPerformance';
 import DeviceHealth from './components/DeviceHealth';
 import LiveCharts from './components/LiveCharts';
 import { telemetryService } from '../../services/api';
+import usePushNotifications from '../../hooks/usePushNotifications';
 
 // Threshold-based status calculation
 function getSensorStatus(name, value) {
@@ -49,6 +50,7 @@ export default function LiveMonitoring() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [deviceId, setDeviceId] = useState('--');
   const [loading, setLoading] = useState(true);
+  const { isSubscribed, isLoading, toggleSubscription } = usePushNotifications();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,27 +88,35 @@ export default function LiveMonitoring() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+      <div className="bg-card rounded-lg shadow-sm border border-border p-5 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
           <div className="flex items-center space-x-3 mb-1">
-            <h1 className="text-2xl font-bold text-slate-900">Live Monitoring</h1>
+            <h1 className="text-2xl font-bold text-text">Live Monitoring</h1>
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-              sensorData ? 'bg-green-100 text-green-700 border-green-200' : 'bg-slate-100 text-slate-500 border-slate-200'
+              sensorData ? 'bg-green-100 text-green-700 border-green-200' : 'bg-slate-100 text-muted border-border'
             }`}>
               {sensorData ? 'Online' : 'Offline'}
             </span>
           </div>
-          <div className="text-sm text-slate-500 flex items-center space-x-4">
+          <div className="text-sm text-muted flex items-center space-x-4">
             <span>Unit ID: {deviceId}</span>
             <span>Last Data: {getTimeAgo()}</span>
           </div>
         </div>
         <div className="mt-4 md:mt-0 flex items-center space-x-4 text-sm">
-          <div className="flex items-center text-slate-500">
+          <div className="flex items-center text-muted">
             <RefreshCw className={`w-4 h-4 mr-2 ${sensorData ? 'animate-spin-slow' : ''}`} />
             Last heartbeat: {sensorData ? getTimeAgo() : 'N/A'}
           </div>
-          <button className="bg-[#EFE9E1] border border-slate-300 text-slate-700 px-4 py-2 rounded-md hover:bg-[#EFE9E1] transition-colors font-medium shadow-sm">
+          <button 
+            onClick={toggleSubscription}
+            disabled={isLoading}
+            className={`${isSubscribed ? 'bg-slate-200 text-slate-700' : 'bg-card text-slate-700'} border border-border px-4 py-2 rounded-md hover:bg-slate-100 transition-colors font-medium shadow-sm flex items-center disabled:opacity-50`}
+          >
+            <Bell className={`w-4 h-4 mr-2 ${isSubscribed ? 'fill-current text-yellow-500' : ''}`} />
+            {isLoading ? 'Wait...' : isSubscribed ? 'Notifications On' : 'Enable Notifications'}
+          </button>
+          <button className="bg-card border border-border text-slate-700 px-4 py-2 rounded-md hover:bg-card transition-colors font-medium shadow-sm">
             Configure Unit
           </button>
         </div>
@@ -172,7 +182,7 @@ export default function LiveMonitoring() {
             <WaterSafetyStatus status={getOverallSafety(systemState)} />
           </div>
           
-          <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-5">
             <h3 className="text-lg font-semibold text-slate-800 mb-4">Treatment Performance</h3>
             <div className="space-y-4">
               <TreatmentPerformance 

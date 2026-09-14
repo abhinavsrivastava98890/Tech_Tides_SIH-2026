@@ -1,28 +1,28 @@
 import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 
 export default function SensorCard({ title, value, unit, normalRange, status, time, trend }) {
-  let statusColor = 'text-status-safe';
+  let statusColor = 'text-success';
   let bgColor = 'bg-green-50 border-green-200';
   
   if (status === 'warning') {
-    statusColor = 'text-status-warning';
+    statusColor = 'text-warning';
     bgColor = 'bg-yellow-50 border-yellow-200';
   } else if (status === 'critical') {
-    statusColor = 'text-status-critical';
+    statusColor = 'text-danger';
     bgColor = 'bg-red-50 border-red-200';
   } else if (status === 'offline') {
     statusColor = 'text-status-offline';
-    bgColor = 'bg-[#EFE9E1] border-slate-200';
+    bgColor = 'bg-card border-border';
   }
 
   let TrendIcon = Minus;
   let trendColor = 'text-slate-400';
   if (trend === 'up') {
     TrendIcon = ArrowUpRight;
-    trendColor = 'text-status-critical'; // Assuming up is bad for things like turbidity/tds
+    trendColor = 'text-danger'; // Assuming up is bad for things like turbidity/tds
   } else if (trend === 'down') {
     TrendIcon = ArrowDownRight;
-    trendColor = 'text-status-safe';
+    trendColor = 'text-success';
   }
 
   return (
@@ -33,9 +33,9 @@ export default function SensorCard({ title, value, unit, normalRange, status, ti
       </div>
       <div className="flex items-baseline mb-1">
         <span className={`text-2xl sm:text-3xl font-bold ${statusColor}`}>{value}</span>
-        <span className="ml-1 text-xs sm:text-sm font-medium text-slate-500">{unit}</span>
+        <span className="ml-1 text-xs sm:text-sm font-medium text-muted">{unit}</span>
       </div>
-      <div className="flex justify-between flex-wrap text-[10px] sm:text-xs text-slate-500 mt-2 sm:mt-3 gap-1">
+      <div className="flex justify-between flex-wrap text-[10px] sm:text-xs text-muted mt-2 sm:mt-3 gap-1">
         <span>Range: {normalRange}</span>
         <span>{time}</span>
       </div>

@@ -19,49 +19,49 @@ export default function Analytics() {
     <div className="p-6 max-w-7xl mx-auto h-full overflow-y-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Analytics & Reports</h1>
-          <p className="text-sm text-slate-500 mt-1">System-wide performance, water quality trends, and operational metrics.</p>
+          <h1 className="text-2xl font-bold text-text">Analytics & Reports</h1>
+          <p className="text-sm text-muted mt-1">System-wide performance, water quality trends, and operational metrics.</p>
         </div>
         <div className="mt-4 md:mt-0 flex space-x-3">
-           <select className="border border-slate-300 rounded-md text-sm px-3 py-2 bg-[#EFE9E1] text-slate-700">
+           <select className="border border-border rounded-md text-sm px-3 py-2 bg-card text-slate-700">
              <option>Last 7 Days</option>
              <option>Last 30 Days</option>
              <option>This Quarter</option>
              <option>This Year</option>
            </select>
-           <button className="px-4 py-2 bg-[#EFE9E1] border border-slate-300 text-slate-700 rounded-md text-sm font-medium hover:bg-[#EFE9E1] transition-colors flex items-center shadow-sm">
+           <button className="px-4 py-2 bg-card border border-border text-slate-700 rounded-md text-sm font-medium hover:bg-card transition-colors flex items-center shadow-sm">
              <Download className="w-4 h-4 mr-2" /> Export Report
            </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5 flex items-center">
-          <div className="p-4 bg-blue-50 text-brand-blue rounded-full mr-4"><Droplets className="w-6 h-6"/></div>
+        <div className="bg-card rounded-lg shadow-sm border border-border p-5 flex items-center">
+          <div className="p-4 bg-accent/10 text-primary rounded-full mr-4"><Droplets className="w-6 h-6"/></div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">Total Water Treated</p>
-            <p className="text-2xl font-bold text-slate-900">14.2M <span className="text-sm font-normal text-slate-500">Liters</span></p>
+            <p className="text-sm text-muted font-medium">Total Water Treated</p>
+            <p className="text-2xl font-bold text-text">14.2M <span className="text-sm font-normal text-muted">Liters</span></p>
           </div>
         </div>
-        <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5 flex items-center">
-          <div className="p-4 bg-green-50 text-status-safe rounded-full mr-4"><Activity className="w-6 h-6"/></div>
+        <div className="bg-card rounded-lg shadow-sm border border-border p-5 flex items-center">
+          <div className="p-4 bg-green-50 text-success rounded-full mr-4"><Activity className="w-6 h-6"/></div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">Average System Uptime</p>
-            <p className="text-2xl font-bold text-slate-900">97.8%</p>
+            <p className="text-sm text-muted font-medium">Average System Uptime</p>
+            <p className="text-2xl font-bold text-text">97.8%</p>
           </div>
         </div>
-        <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5 flex items-center">
-          <div className="p-4 bg-yellow-50 text-status-warning rounded-full mr-4"><BarChart3 className="w-6 h-6"/></div>
+        <div className="bg-card rounded-lg shadow-sm border border-border p-5 flex items-center">
+          <div className="p-4 bg-yellow-50 text-warning rounded-full mr-4"><BarChart3 className="w-6 h-6"/></div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">Module Replacements</p>
-            <p className="text-2xl font-bold text-slate-900">24 <span className="text-sm font-normal text-slate-500">this month</span></p>
+            <p className="text-sm text-muted font-medium">Module Replacements</p>
+            <p className="text-2xl font-bold text-text">24 <span className="text-sm font-normal text-muted">this month</span></p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Uptime Trend */}
-        <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
+        <div className="bg-card rounded-lg shadow-sm border border-border p-5">
           <h3 className="text-lg font-semibold text-slate-800 mb-4">Network Uptime Trend</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -83,7 +83,7 @@ export default function Analytics() {
         </div>
 
         {/* Alerts by District */}
-        <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
+        <div className="bg-card rounded-lg shadow-sm border border-border p-5">
           <h3 className="text-lg font-semibold text-slate-800 mb-4">Alerts by District</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -102,9 +102,9 @@ export default function Analytics() {
       </div>
       
       {/* Table Placeholder */}
-      <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
+      <div className="bg-card rounded-lg shadow-sm border border-border p-5">
         <h3 className="text-lg font-semibold text-slate-800 mb-4">Scheduled Reports</h3>
-        <div className="flex items-center justify-center h-32 border-2 border-dashed border-slate-200 rounded-lg text-slate-400">
+        <div className="flex items-center justify-center h-32 border-2 border-dashed border-border rounded-lg text-slate-400">
            Reports table placeholder
         </div>
       </div>

@@ -42,8 +42,8 @@ export default function SiteListTable({ onSelectSite }) {
   };
 
   return (
-    <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-      <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+      <div className="p-4 border-b border-border flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="relative w-full sm:w-96">
           <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-slate-400" />
@@ -53,15 +53,15 @@ export default function SiteListTable({ onSelectSite }) {
             placeholder="Search by Site ID, Village, or District..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-brand-blue"
+            className="block w-full pl-10 pr-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 bg-[#EFE9E1] hover:bg-[#EFE9E1]">
+          <button className="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 border border-border rounded-md text-sm font-medium text-slate-700 bg-card hover:bg-card">
             <Filter className="w-4 h-4 mr-2" />
             Filters
           </button>
-          <button className="flex-1 sm:flex-none px-4 py-2 bg-brand-blue text-white rounded-md text-sm font-medium hover:bg-blue-800 transition-colors">
+          <button className="flex-1 sm:flex-none px-4 py-2 bg-accent text-white rounded-md text-sm font-medium hover:bg-accent/90 transition-colors">
             + Add New Site
           </button>
         </div>
@@ -69,7 +69,7 @@ export default function SiteListTable({ onSelectSite }) {
 
       <div className="overflow-x-auto">
         <table className="w-full min-w-[900px] text-sm text-left whitespace-nowrap">
-          <thead className="bg-[#EFE9E1] text-slate-500 uppercase text-xs font-semibold">
+          <thead className="bg-card text-muted uppercase text-xs font-semibold">
             <tr>
               <th className="px-6 py-3">Site ID</th>
               <th className="px-6 py-3">Location</th>
@@ -81,24 +81,24 @@ export default function SiteListTable({ onSelectSite }) {
               <th className="px-6 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-border">
             {mockSites.filter(s => s.village.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase())).map((row) => (
-              <tr key={row.id} className="hover:bg-[#EFE9E1] transition-colors cursor-pointer" onClick={() => onSelectSite(row)}>
-                <td className="px-6 py-4 font-medium text-slate-900">{row.id}</td>
+              <tr key={row.id} className="hover:bg-card transition-colors cursor-pointer" onClick={() => onSelectSite(row)}>
+                <td className="px-6 py-4 font-medium text-text">{row.id}</td>
                 <td className="px-6 py-4">
                   <div className="font-medium">{row.village}</div>
-                  <div className="text-xs text-slate-500 flex items-center mt-0.5">
+                  <div className="text-xs text-muted flex items-center mt-0.5">
                     <MapPin className="w-3 h-3 mr-1" />
                     {row.block}, {row.district}
                   </div>
                 </td>
-                <td className="px-6 py-4 text-slate-600">{row.source}</td>
-                <td className="px-6 py-4 text-slate-600">{row.population.toLocaleString()}</td>
+                <td className="px-6 py-4 text-muted">{row.source}</td>
+                <td className="px-6 py-4 text-muted">{row.population.toLocaleString()}</td>
                 <td className="px-6 py-4"><StatusBadge status={row.unit} /></td>
                 <td className="px-6 py-4"><StatusBadge status={row.water} /></td>
-                <td className="px-6 py-4 text-slate-600">{row.lastTest}</td>
+                <td className="px-6 py-4 text-muted">{row.lastTest}</td>
                 <td className="px-6 py-4 text-right">
-                  <button className="text-slate-400 hover:text-slate-600 p-1" onClick={(e) => { e.stopPropagation(); }}>
+                  <button className="text-slate-400 hover:text-muted p-1" onClick={(e) => { e.stopPropagation(); }}>
                     <MoreVertical className="w-5 h-5" />
                   </button>
                 </td>

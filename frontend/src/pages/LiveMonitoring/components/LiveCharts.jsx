@@ -41,7 +41,7 @@ export default function LiveCharts() {
   }, []);
 
   return (
-    <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5 h-full">
+    <div className="bg-card rounded-lg shadow-sm border border-border p-5 h-full">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-semibold text-slate-800">Live Event Stream</h3>
         <span className="text-xs text-slate-400">
@@ -77,14 +77,14 @@ export default function LiveCharts() {
       </div>
       
       <div className="mt-6 border-t border-slate-100 pt-4 flex gap-4 text-sm justify-center">
-        <span className="flex items-center text-slate-600">
-          <span className="w-3 h-3 rounded-full bg-brand-blue mr-2"></span> TDS
+        <span className="flex items-center text-muted">
+          <span className="w-3 h-3 rounded-full bg-accent mr-2"></span> TDS
         </span>
-        <span className="flex items-center text-slate-600">
-          <span className="w-3 h-3 rounded-full bg-status-warning mr-2"></span> Turbidity
+        <span className="flex items-center text-muted">
+          <span className="w-3 h-3 rounded-full bg-warning mr-2"></span> Turbidity
         </span>
-        <span className="flex items-center text-slate-600">
-          <span className="w-3 h-3 rounded-full bg-brand-teal mr-2"></span> pH
+        <span className="flex items-center text-muted">
+          <span className="w-3 h-3 rounded-full bg-teal mr-2"></span> pH
         </span>
       </div>
     </div>

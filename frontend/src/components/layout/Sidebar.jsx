@@ -46,13 +46,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       )}
       
       <aside className={`
-        fixed inset-y-0 left-0 z-[9999] w-64 bg-[#6FA8C6] text-slate-300 flex flex-col h-full border-r border-slate-800 transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-[9999] w-64 bg-accent text-slate-100 flex flex-col h-full border-r border-accent transition-transform duration-300 ease-in-out
         md:static md:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-900 shrink-0">
           <div className="flex items-center">
-            <Droplet className="text-brand-teal w-6 h-6 mr-2 shrink-0" />
+            <Droplet className="text-teal w-6 h-6 mr-2 shrink-0" />
             <span className="text-xl font-bold text-white">JalRakshak</span>
           </div>
           <button 
@@ -76,11 +76,11 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
                       isActive 
-                        ? 'bg-brand-blue text-white' 
-                        : 'hover:bg-slate-800 hover:text-white'
+                        ? 'bg-white/20 text-white shadow-sm' 
+                        : 'hover:bg-white/10 hover:text-white text-slate-100'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 mr-3 shrink-0 ${isActive ? 'text-brand-teal' : 'text-slate-400'}`} />
+                    <Icon className={`w-5 h-5 mr-3 shrink-0 ${isActive ? 'text-white' : 'text-slate-200'}`} />
                     {item.label}
                   </Link>
                 </li>
@@ -93,20 +93,20 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           <div className="space-y-2 mb-4">
             <Link 
               to="/"
-              className="flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors"
+              className="flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-white/10 hover:text-white transition-colors text-slate-100"
             >
-              <Home className="w-4 h-4 mr-3 shrink-0 text-slate-400" />
+              <Home className="w-4 h-4 mr-3 shrink-0 text-slate-200" />
               Public Home Page
             </Link>
             <button 
               onClick={handleLogout}
-              className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-red-900/30 hover:text-red-400 transition-colors text-left"
+              className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-red-500/20 hover:text-red-100 transition-colors text-left text-slate-100"
             >
-              <LogOut className="w-4 h-4 mr-3 shrink-0 text-slate-400" />
+              <LogOut className="w-4 h-4 mr-3 shrink-0 text-slate-200" />
               Lock Session
             </button>
           </div>
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-blue-100/70">
             <p>JalRakshak Platform</p>
             <p>v2.0.0 (Production)</p>
           </div>

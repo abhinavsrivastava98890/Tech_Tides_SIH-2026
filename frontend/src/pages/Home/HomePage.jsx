@@ -6,18 +6,19 @@ import {
 } from 'lucide-react';
 import { telemetryService } from '../../services/api';
 import SupervisorAuth from '../../components/SupervisorAuth';
+import usePushNotifications from '../../hooks/usePushNotifications';
 
 const SensorCard = ({ icon: Icon, label, value, unit, status }) => (
-  <div className="bg-[#EFE9E1] border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col items-center justify-center transition-shadow hover:shadow-md">
-    <div className="p-2 bg-[#EFE9E1] rounded-full mb-2">
-      <Icon className="w-5 h-5 text-brand-blue" />
+  <div className="bg-card border border-border rounded-xl p-4 shadow-sm flex flex-col items-center justify-center transition-shadow hover:shadow-md">
+    <div className="p-2 bg-card rounded-full mb-2">
+      <Icon className="w-5 h-5 text-primary" />
     </div>
-    <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-1">{label}</p>
+    <p className="text-muted text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-1">{label}</p>
     <div className="flex items-baseline gap-1">
-      <span className="text-2xl font-bold text-slate-900">
+      <span className="text-2xl font-bold text-text">
         {value !== null && value !== undefined ? value : '--'}
       </span>
-      <span className="text-slate-500 font-medium text-xs">{unit}</span>
+      <span className="text-muted font-medium text-xs">{unit}</span>
     </div>
     <div className={`mt-2 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase ${
       status === 'NORMAL' ? 'bg-green-100 text-green-700' :
@@ -65,60 +66,7 @@ export default function HomePage() {
     navigate('/supervisor/dashboard');
   };
 
-  const subscribeToPushNotifications = async () => {
-    try {
-      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        alert('Push notifications are not supported by your browser.');
-        return;
-      }
-      
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
-        alert('Notification permission denied.');
-        return;
-      }
-
-      const registration = await navigator.serviceWorker.register('/service-worker.js');
-      await navigator.serviceWorker.ready;
-
-      const publicVapidKey = 'BNiOGAHyOO05DcwVsUp7hjzCIGEcLtMZ_UQk7Q3CN_4Cn1l19QOkPmmgZh59VD8v6ZvfnBM9qeBfZ4jaSdKEIPE';
-      
-      const urlBase64ToUint8Array = (base64String) => {
-        const padding = '='.repeat((4 - base64String.length % 4) % 4);
-        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
-        for (let i = 0; i < rawData.length; ++i) {
-          outputArray[i] = rawData.charCodeAt(i);
-        }
-        return outputArray;
-      };
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
-      });
-
-      const response = await fetch('http://localhost:5000/api/notifications/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subscription)
-      });
-
-      if (response.ok) {
-        alert('Successfully subscribed to notifications!');
-      } else {
-        alert('Failed to save subscription on server.');
-      }
-    } catch (error) {
-      console.error('Error subscribing to push notifications:', error);
-      if (error.name === 'AbortError' || error.message.includes('push service error')) {
-        alert('Push registration failed. If you are using Brave or Incognito mode, push notifications might be blocked by default. Please use Chrome/Edge or enable push services in your browser settings.');
-      } else {
-        alert('Error subscribing to notifications. Check console for details.');
-      }
-    }
-  };
+  const { isSubscribed, isLoading, toggleSubscription } = usePushNotifications();
 
   // Determine active status card
   let activeStatus = 'SAFE'; // default
@@ -172,10 +120,10 @@ export default function HomePage() {
       pulse: false
     },
     NO_DATA: {
-      cardClass: 'bg-[#EFE9E1] border-slate-300',
+      cardClass: 'bg-card border-border',
       iconBgClass: 'bg-slate-200',
-      iconClass: 'text-slate-500',
-      titleClass: 'text-slate-600',
+      iconClass: 'text-muted',
+      titleClass: 'text-muted',
       title: 'NO DATA',
       desc: 'Waiting for device telemetry...',
       Icon: AlertTriangle,
@@ -187,7 +135,7 @@ export default function HomePage() {
   const StatusIcon = currentStatus.Icon;
 
   return (
-    <div className="min-h-screen bg-[#EFE9E1] flex flex-col font-sans">
+    <div className="min-h-screen bg-card flex flex-col font-sans">
       
       {/* TOP HEADER */}
       <header className="bg-[#6FA8C6] text-white px-8 py-4 flex justify-between items-center shadow-md z-10 shrink-0">
@@ -204,10 +152,12 @@ export default function HomePage() {
         
         <div className="flex items-center gap-3">
           <button 
-            onClick={subscribeToPushNotifications}
-            className="bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-2 text-sm font-medium transition-colors px-5 py-2.5 rounded-lg shadow-sm"
+            onClick={toggleSubscription}
+            disabled={isLoading}
+            className={`${isSubscribed ? 'bg-slate-700 hover:bg-slate-600' : 'bg-slate-900 hover:bg-slate-800'} text-white flex items-center gap-2 text-sm font-medium transition-colors px-5 py-2.5 rounded-lg shadow-sm disabled:opacity-50`}
           >
-            <Bell className="w-4 h-4" /> Enable Notifications
+            <Bell className={`w-4 h-4 ${isSubscribed ? 'fill-current text-yellow-400' : ''}`} /> 
+            {isLoading ? 'Loading...' : isSubscribed ? 'Notifications On' : 'Enable Notifications'}
           </button>
         </div>
       </header>
@@ -226,7 +176,7 @@ export default function HomePage() {
               </div>
               <div>
                 <h3 className={`text-xl font-bold ${currentStatus.titleClass}`}>{currentStatus.title}</h3>
-                <p className="text-sm text-slate-500">{currentStatus.desc}</p>
+                <p className="text-sm text-muted">{currentStatus.desc}</p>
               </div>
             </div>
 
@@ -243,14 +193,14 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-4">
               <h2 className="text-xl font-bold text-slate-800 shrink-0">Live Telemetry Readings</h2>
               {lastUpdated && (
-                <div className="flex flex-col items-start sm:items-end bg-slate-200/50 px-3 py-1.5 rounded-lg border border-slate-200/60">
+                <div className="flex flex-col items-start sm:items-end bg-slate-200/50 px-3 py-1.5 rounded-lg border border-border/60">
                   {data && (data.timestamp || data.createdAt) && (
                     <p className="text-slate-700 text-sm font-medium mb-1 flex items-center">
-                      <span className="text-slate-500 font-normal mr-1">Sensor Time:</span> 
+                      <span className="text-muted font-normal mr-1">Sensor Time:</span> 
                       {new Date(data.timestamp || data.createdAt).toLocaleString()}
                     </p>
                   )}
-                  <p className="text-slate-500 text-[11px] font-semibold uppercase tracking-wider flex items-center">
+                  <p className="text-muted text-[11px] font-semibold uppercase tracking-wider flex items-center">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 shadow-[0_0_4px_rgba(34,197,94,0.8)]"></span>
                     Frontend Synced: {lastUpdated.toLocaleTimeString()}
                   </p>
@@ -301,7 +251,7 @@ export default function HomePage() {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-[#EFE9E1] border-t border-slate-200 py-4 px-8 text-center text-sm text-slate-500 shrink-0">
+      <footer className="bg-card border-t border-border py-4 px-8 text-center text-sm text-muted shrink-0">
         JalRakshak v2.0 Platform &copy; 2026. All rights reserved.
       </footer>
 

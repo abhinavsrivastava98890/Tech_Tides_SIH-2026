@@ -25,14 +25,14 @@ export default function RecentAlerts() {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div className="bg-[#EFE9E1] rounded-lg shadow-sm border border-slate-200 p-5">
+    <div className="bg-card rounded-lg shadow-sm border border-border p-5">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-slate-800">Recent Alerts</h3>
-        <button className="text-sm text-brand-blue font-medium hover:underline">View All</button>
+        <button className="text-sm text-primary font-medium hover:underline">View All</button>
       </div>
       <div className="space-y-4">
         {loading ? (
-          <div className="text-center py-4 text-sm text-slate-500">Loading alerts...</div>
+          <div className="text-center py-4 text-sm text-muted">Loading alerts...</div>
         ) : alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center bg-green-50 rounded-lg border border-green-100">
              <CheckCircle2 className="w-8 h-8 text-green-500 mb-2" />
@@ -42,29 +42,29 @@ export default function RecentAlerts() {
         ) : (
           alerts.map(alert => {
             let Icon = Info;
-            let color = 'text-brand-blue';
-            let bgColor = 'bg-blue-50';
+            let color = 'text-primary';
+            let bgColor = 'bg-accent/10';
 
             if (alert.severity === 'CRITICAL') {
               Icon = AlertOctagon;
-              color = 'text-status-critical';
+              color = 'text-danger';
               bgColor = 'bg-red-50';
             } else if (alert.severity === 'WARNING' || alert.severity === 'HIGH') {
               Icon = AlertTriangle;
-              color = 'text-status-warning';
+              color = 'text-warning';
               bgColor = 'bg-yellow-50';
             }
 
             const timeStr = new Date(alert.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             return (
-              <div key={alert._id} className="flex items-start p-3 rounded-md hover:bg-[#EFE9E1] transition-colors border border-transparent hover:border-slate-100">
+              <div key={alert._id} className="flex items-start p-3 rounded-md hover:bg-card transition-colors border border-transparent hover:border-slate-100">
                 <div className={`p-2 rounded-full ${bgColor} mr-3 shrink-0`}>
                   <Icon className={`w-4 h-4 ${color}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-900 truncate">{alert.faultName}</p>
-                  <p className="text-xs text-slate-500 truncate">{alert.message}</p>
+                  <p className="text-sm font-medium text-text truncate">{alert.faultName}</p>
+                  <p className="text-xs text-muted truncate">{alert.message}</p>
                 </div>
                 <div className="text-xs text-slate-400 whitespace-nowrap ml-2">
                   {timeStr}

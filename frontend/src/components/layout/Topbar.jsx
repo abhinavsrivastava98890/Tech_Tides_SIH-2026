@@ -55,7 +55,7 @@ export default function Topbar({ onMenuClick }) {
 
         {/* User Profile */}
         <button className="flex items-center text-sm focus:outline-none">
-          <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-white font-semibold">
+          <div className="h-8 w-8 rounded-full bg-aqua flex items-center justify-center text-white font-semibold">
             SA
           </div>
           <span className="ml-2 font-medium text-slate-700 hidden md:inline-block">Super Admin</span>

@@ -40,19 +40,19 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       {/* Mobile overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-[9998] bg-slate-900/80 md:hidden"
+          className="fixed inset-0 z-[9998] bg-navy/80 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
       
       <aside className={`
-        fixed inset-y-0 left-0 z-[9999] w-64 bg-accent text-slate-100 flex flex-col h-full border-r border-accent transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-[9999] w-64 bg-navy text-slate-100 flex flex-col h-full border-r border-navy transition-transform duration-300 ease-in-out
         md:static md:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-900 shrink-0">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-[#1E293B] bg-navy shrink-0">
           <div className="flex items-center">
-            <Droplet className="text-teal w-6 h-6 mr-2 shrink-0" />
+            <Droplet className="text-aqua w-6 h-6 mr-2 shrink-0" />
             <span className="text-xl font-bold text-white">JalRakshak</span>
           </div>
           <button 
@@ -76,7 +76,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
                       isActive 
-                        ? 'bg-white/20 text-white shadow-sm' 
+                        ? 'bg-primary text-white shadow-sm' 
                         : 'hover:bg-white/10 hover:text-white text-slate-100'
                     }`}
                   >
@@ -89,7 +89,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </ul>
         </nav>
         
-        <div className="p-4 border-t border-slate-800 shrink-0">
+        <div className="p-4 border-t border-[#1E293B] shrink-0">
           <div className="space-y-2 mb-4">
             <Link 
               to="/"

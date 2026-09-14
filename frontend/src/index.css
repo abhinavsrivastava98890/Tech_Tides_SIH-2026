@@ -2,11 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-background text-text font-sans antialiased;
-  }
-}
+
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }

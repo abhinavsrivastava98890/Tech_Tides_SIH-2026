@@ -135,14 +135,14 @@ export default function HomePage() {
   const StatusIcon = currentStatus.Icon;
 
   return (
-    <div className="min-h-screen bg-card flex flex-col font-sans">
+    <div className="min-h-screen bg-background flex flex-col font-sans">
       
       {/* TOP HEADER */}
-      <header className="bg-[#6FA8C6] text-white px-8 py-4 flex justify-between items-center shadow-md z-10 shrink-0">
+      <header className="bg-navy text-white px-8 py-4 flex justify-between items-center shadow-md z-10 shrink-0">
         <div className="flex items-center">
           <Droplets 
             onClick={() => setShowAuth(true)} 
-            className="text-white w-8 h-8 mr-3 cursor-pointer hover:scale-105 transition-transform" 
+            className="text-aqua w-8 h-8 mr-3 cursor-pointer hover:scale-105 transition-transform" 
           />
           <div>
             <h1 className="text-2xl font-bold tracking-tight">JalRakshak</h1>
@@ -154,7 +154,7 @@ export default function HomePage() {
           <button 
             onClick={toggleSubscription}
             disabled={isLoading}
-            className={`${isSubscribed ? 'bg-slate-700 hover:bg-slate-600' : 'bg-slate-900 hover:bg-slate-800'} text-white flex items-center gap-2 text-sm font-medium transition-colors px-5 py-2.5 rounded-lg shadow-sm disabled:opacity-50`}
+            className={`${isSubscribed ? 'bg-muted hover:bg-slate-600' : 'bg-primary hover:bg-blue-600'} text-white flex items-center gap-2 text-sm font-medium transition-colors px-5 py-2.5 rounded-lg shadow-sm disabled:opacity-50`}
           >
             <Bell className={`w-4 h-4 ${isSubscribed ? 'fill-current text-yellow-400' : ''}`} /> 
             {isLoading ? 'Loading...' : isSubscribed ? 'Notifications On' : 'Enable Notifications'}
@@ -168,7 +168,7 @@ export default function HomePage() {
           
           {/* Status Section */}
           <section>
-            <h2 className="text-lg font-semibold text-slate-800 mb-4">Overall System Status</h2>
+            <h2 className="text-lg font-semibold text-navy mb-4">Overall System Status</h2>
             
             <div className={`rounded-xl p-6 flex items-center transition-all border-2 shadow-sm ${currentStatus.cardClass} ${currentStatus.pulse ? 'animate-pulse' : ''}`}>
               <div className={`p-4 rounded-full mr-4 ${currentStatus.iconBgClass}`}>
@@ -191,9 +191,9 @@ export default function HomePage() {
           {/* Telemetry Section */}
           <section>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-4">
-              <h2 className="text-xl font-bold text-slate-800 shrink-0">Live Telemetry Readings</h2>
+              <h2 className="text-xl font-bold text-navy shrink-0">Live Telemetry Readings</h2>
               {lastUpdated && (
-                <div className="flex flex-col items-start sm:items-end bg-slate-200/50 px-3 py-1.5 rounded-lg border border-border/60">
+                <div className="flex flex-col items-start sm:items-end bg-card px-3 py-1.5 rounded-lg border border-border shadow-sm">
                   {data && (data.timestamp || data.createdAt) && (
                     <p className="text-slate-700 text-sm font-medium mb-1 flex items-center">
                       <span className="text-muted font-normal mr-1">Sensor Time:</span> 

@@ -7,24 +7,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#fffff2',
-        card: '#FFFFEB',
-        primary: '#164A63',
-        teal: '#287D7B',
-        water: '#5B9DB5',
-        success: '#22C55E',
+        background: '#F8FAFC',
+        card: '#FFFFFF',
+        primary: '#2563EB',
+        navy: '#0F172A',
+        aqua: '#0891B2',
+        water: '#0891B2',
+        success: '#16A34A',
         warning: '#F59E0B',
         danger: '#EF4444',
-        text: '#263238',
-        muted: '#687477',
-        border: '#D8D0C6',
-        accent: '#6ab2f9',
+        critical: '#EF4444',
+        text: '#0F172A',
+        muted: '#64748B',
+        border: '#E2E8F0',
+        accent: '#0891B2',
         blue: {
-          500: '#6ab2f9'
+          500: '#2563EB'
         }
       },
       ringColor: {
-        DEFAULT: '#6ab2f9',
+        DEFAULT: '#2563EB',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

@@ -2,13 +2,6 @@ import { useEffect, useState } from 'react';
 import { CheckCircle2, AlertTriangle, AlertOctagon, XCircle } from 'lucide-react';
 import { telemetryService } from '../../../services/api';
 
-const MOCK_SITES = [
-  { id: 'JR-BK-04', village: 'Chas', district: 'Bokaro', source: 'Surface Water', unit: 'Warning', water: 'Safe', active: 'Common Only' },
-  { id: 'JR-PL-02', village: 'Hussainabad', district: 'Palamu', source: 'Groundwater', unit: 'Online', water: 'Critical', active: 'Common + Iron' },
-  { id: 'JR-SG-07', village: 'Barhait', district: 'Sahibganj', source: 'Groundwater', unit: 'Maintenance', water: 'Warning', active: 'Common + Arsenic' },
-  { id: 'JR-RN-12', village: 'Kanke', district: 'Ranchi', source: 'Open Well', unit: 'Offline', water: 'Unknown', active: 'Common Only' },
-];
-
 const StatusBadge = ({ status }) => {
   let color = 'bg-slate-100 text-slate-700';
   let Icon = null;
@@ -41,9 +34,8 @@ const StatusBadge = ({ status }) => {
     </span>
   );
 };
-
 export default function LiveSitesTable() {
-  const [sites, setSites] = useState(MOCK_SITES);
+  const [sites, setSites] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchTelemetry = async () => {
@@ -72,8 +64,9 @@ export default function LiveSitesTable() {
           active: 'ESP32 Node'
         };
 
-        // Combine real site at the top with mock sites
-        setSites([realSite, ...MOCK_SITES]);
+        setSites([realSite]);
+      } else {
+        setSites([]);
       }
     } catch (error) {
       console.error('Failed to load telemetry data');

@@ -1,15 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertOctagon, AlertTriangle, Info, CheckCircle2, User, Clock, Search, Filter } from 'lucide-react';
-
-const mockAlerts = [
-  { id: 'INC-1024', site: 'Palamu Village (JR-PL-02)', parameter: 'Turbidity', value: '15 NTU', threshold: '5 NTU', severity: 'Critical', status: 'Unassigned', time: '10 mins ago' },
-  { id: 'INC-1023', site: 'Bokaro Sector 4 (JR-BK-04)', parameter: 'Filter Pressure', value: '1.2 bar', threshold: '1.5 bar', severity: 'High', status: 'Assigned', time: '1 hr ago', assignee: 'Ramesh K.' },
-  { id: 'INC-1022', site: 'Sahibganj River (JR-SG-07)', parameter: 'Connectivity', value: 'Offline', threshold: 'N/A', severity: 'Warning', status: 'Assigned', time: '2 hrs ago', assignee: 'Suresh M.' },
-  { id: 'INC-1021', site: 'Dhanbad Plant A (JR-DH-01)', parameter: 'Routine Backwash', value: 'Started', threshold: 'N/A', severity: 'Info', status: 'Resolved', time: '5 hrs ago' },
-];
+import { alertService } from '../../services/api';
 
 export default function Alerts() {
-  const [selectedAlert, setSelectedAlert] = useState(mockAlerts[0]);
+  const [alerts, setAlerts] = useState([]);
+  const [selectedAlert, setSelectedAlert] = useState(null);
+
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const res = await alertService.getActive();
+        if (res.success && res.data) {
+          const formattedAlerts = res.data.map(a => ({
+            id: a.alertId || a._id,
+            site: a.deviceId,
+            parameter: a.faultName,
+            value: `Code: ${a.faultCode}`,
+            threshold: 'N/A',
+            severity: a.severity.charAt(0).toUpperCase() + a.severity.slice(1).toLowerCase(),
+            status: a.resolved ? 'Resolved' : 'Active',
+            time: new Date(a.timestamp).toLocaleTimeString(),
+            message: a.message
+          }));
+          setAlerts(formattedAlerts);
+          if (formattedAlerts.length > 0 && !selectedAlert) {
+            setSelectedAlert(formattedAlerts[0]);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch live alerts', err);
+      }
+    };
+    fetchAlerts();
+    const int = setInterval(fetchAlerts, 10000);
+    return () => clearInterval(int);
+  }, []);
 
   const SeverityBadge = ({ severity }) => {
     let color = 'bg-accent/20 text-accent';
@@ -49,26 +74,30 @@ export default function Alerts() {
           </div>
           
           <div className="flex-1 overflow-y-auto">
-            {mockAlerts.map(alert => (
-              <div 
-                key={alert.id}
-                onClick={() => setSelectedAlert(alert)}
-                className={`p-4 border-b border-slate-100 cursor-pointer transition-colors ${selectedAlert.id === alert.id ? 'bg-accent/10 border-l-4 border-l-accent' : 'hover:bg-card border-l-4 border-l-transparent'}`}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs font-semibold text-muted">{alert.id}</span>
-                  <SeverityBadge severity={alert.severity} />
+            {alerts.length === 0 ? (
+              <div className="p-8 text-center text-slate-500">No active alerts. System is running smoothly!</div>
+            ) : (
+              alerts.map(alert => (
+                <div 
+                  key={alert.id}
+                  onClick={() => setSelectedAlert(alert)}
+                  className={`p-4 border-b border-slate-100 cursor-pointer transition-colors ${selectedAlert?.id === alert.id ? 'bg-accent/10 border-l-4 border-l-accent' : 'hover:bg-card border-l-4 border-l-transparent'}`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs font-semibold text-muted">{alert.id}</span>
+                    <SeverityBadge severity={alert.severity} />
+                  </div>
+                  <h3 className="text-sm font-semibold text-text mb-1">{alert.parameter} Issue</h3>
+                  <p className="text-xs text-muted mb-2 truncate">{alert.site}</p>
+                  <div className="flex justify-between items-center text-xs text-slate-400">
+                    <span className="flex items-center"><Clock className="w-3 h-3 mr-1"/> {alert.time}</span>
+                    <span className={`px-2 py-0.5 rounded-full ${alert.status === 'Unassigned' ? 'bg-slate-100' : alert.status === 'Resolved' ? 'bg-green-100 text-green-700' : 'bg-accent text-white'}`}>
+                      {alert.status}
+                    </span>
+                  </div>
                 </div>
-                <h3 className="text-sm font-semibold text-text mb-1">{alert.parameter} Issue</h3>
-                <p className="text-xs text-muted mb-2 truncate">{alert.site}</p>
-                <div className="flex justify-between items-center text-xs text-slate-400">
-                  <span className="flex items-center"><Clock className="w-3 h-3 mr-1"/> {alert.time}</span>
-                  <span className={`px-2 py-0.5 rounded-full ${alert.status === 'Unassigned' ? 'bg-slate-100' : alert.status === 'Resolved' ? 'bg-green-100 text-green-700' : 'bg-accent text-white'}`}>
-                    {alert.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 

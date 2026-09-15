@@ -57,6 +57,15 @@
 #define PIN_LED_BLUE        27    // RGB LED blue channel (220Ω resistor)
 #define PIN_BUZZER          14    // Active buzzer (HIGH = ON)
 
+// --- RGB LED Type ---
+// Set to 1 if your RGB LED is Common Anode (most common, has + in middle)
+// Set to 0 if your RGB LED is Common Cathode (- in middle)
+#define COMMON_ANODE        0     // Common Cathode LED: HIGH=ON, LOW=OFF
+
+// --- Buzzer Enable ---
+// Set to false to completely silence the buzzer (LED still shows alerts)
+#define BUZZER_ENABLED      false
+
 // I2C LCD uses default ESP32 I2C pins: SDA=21, SCL=22
 
 // ============================================================
@@ -412,10 +421,16 @@ int checkThresholds() {
 }
 
 // --- Buzzer Control (non-blocking beep patterns) ---
+// NOTE: Active-LOW buzzer — HIGH=OFF, LOW=ON
 void updateBuzzer(int severity) {
+#if !BUZZER_ENABLED
+    // Buzzer disabled — keep pin HIGH (silent for active-low buzzer)
+    digitalWrite(PIN_BUZZER, HIGH);
+    return;
+#endif
     if (severity == 0) {
-        // NORMAL — buzzer OFF
-        digitalWrite(PIN_BUZZER, LOW);
+        // NORMAL — buzzer OFF (HIGH = OFF for active-low)
+        digitalWrite(PIN_BUZZER, HIGH);
         g_buzzerOn = false;
         return;
     }
@@ -426,28 +441,40 @@ void updateBuzzer(int severity) {
     unsigned long now = millis();
     if (now - g_lastBuzzerToggleMs >= beepInterval) {
         g_buzzerOn = !g_buzzerOn;
-        digitalWrite(PIN_BUZZER, g_buzzerOn ? HIGH : LOW);
+        // Active-low: LOW=ON, HIGH=OFF
+        digitalWrite(PIN_BUZZER, g_buzzerOn ? LOW : HIGH);
         g_lastBuzzerToggleMs = now;
     }
 }
 
 // --- RGB LED Control based on severity ---
+// Handles both Common Anode (COMMON_ANODE=1) and Common Cathode (COMMON_ANODE=0)
 void setRGBLed(int severity) {
+    // For Common Anode: LOW = ON, HIGH = OFF
+    // For Common Cathode: HIGH = ON, LOW = OFF
+    #if COMMON_ANODE
+        #define LED_ON  LOW
+        #define LED_OFF HIGH
+    #else
+        #define LED_ON  HIGH
+        #define LED_OFF LOW
+    #endif
+
     switch (severity) {
         case 0:  // NORMAL — solid GREEN
-            analogWrite(PIN_LED_RED, 0);
-            analogWrite(PIN_LED_GREEN, 255);
-            analogWrite(PIN_LED_BLUE, 0);
+            digitalWrite(PIN_LED_RED,   LED_OFF);
+            digitalWrite(PIN_LED_GREEN, LED_ON);
+            digitalWrite(PIN_LED_BLUE,  LED_OFF);
             break;
-        case 1:  // WARNING — solid YELLOW
-            analogWrite(PIN_LED_RED, 255);
-            analogWrite(PIN_LED_GREEN, 255);
-            analogWrite(PIN_LED_BLUE, 0);
+        case 1:  // WARNING — solid YELLOW (Red + Green)
+            digitalWrite(PIN_LED_RED,   LED_ON);
+            digitalWrite(PIN_LED_GREEN, LED_ON);
+            digitalWrite(PIN_LED_BLUE,  LED_OFF);
             break;
         case 2:  // CRITICAL — solid RED
-            analogWrite(PIN_LED_RED, 255);
-            analogWrite(PIN_LED_GREEN, 0);
-            analogWrite(PIN_LED_BLUE, 0);
+            digitalWrite(PIN_LED_RED,   LED_ON);
+            digitalWrite(PIN_LED_GREEN, LED_OFF);
+            digitalWrite(PIN_LED_BLUE,  LED_OFF);
             break;
     }
 }
@@ -695,14 +722,14 @@ void setup() {
     pinMode(PIN_LED_RED, OUTPUT);
     pinMode(PIN_LED_GREEN, OUTPUT);
     pinMode(PIN_LED_BLUE, OUTPUT);
-    analogWrite(PIN_LED_RED, 0);
-    analogWrite(PIN_LED_GREEN, 0);
-    analogWrite(PIN_LED_BLUE, 0);
+    digitalWrite(PIN_LED_RED, LOW);
+    digitalWrite(PIN_LED_GREEN, LOW);
+    digitalWrite(PIN_LED_BLUE, LOW);
     Serial.println("[LED] RGB LED initialized.");
 
     // --- Initialize Buzzer ---
     pinMode(PIN_BUZZER, OUTPUT);
-    digitalWrite(PIN_BUZZER, LOW);
+    digitalWrite(PIN_BUZZER, HIGH);  // HIGH = OFF for active-low buzzer
     Serial.println("[BUZZER] Buzzer initialized on GPIO 14.");
 
     // --- Initialize DS18B20 Temperature Sensor ---

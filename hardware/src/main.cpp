@@ -277,15 +277,8 @@ float readPH() {
     // Realistic pH: 6.8 to 7.6
     return 6.8 + (random(0, 8) / 10.0);
 #else
-    int raw = getMedianAnalogRead(PIN_PH);
-    float voltage = raw * (VREF / ADC_RESOLUTION);
-
-    // If using a 5V pH sensor on a 3.3V ESP32, the neutral voltage drops (usually around 1.5V - 1.8V).
-    // You may need to adjust PH_NEUTRAL_VOLTAGE (defined as 2.5V above) based on your hardware.
-    float ph = 7.0 + ((PH_NEUTRAL_VOLTAGE - voltage) / PH_VOLTS_PER_UNIT);
-    if (ph < 0) ph = 0;
-    if (ph > 14) ph = 14;
-
+    // User requested to simulate pH between 6.5 and 7.0 due to hardware issues
+    float ph = 6.5 + (random(0, 6) / 10.0);
     return ph;
 #endif
 }
@@ -491,14 +484,15 @@ void updateLCD() {
             lcd.print(String(g_ph, 2) + "            ");
             break;
 
-        case 4:  // Flow + Status
-            lcd.print("Flow:           ");
+        case 4:  // Screen 5: Flow Status
+            lcd.setCursor(0, 0);
+            lcd.print("Water Flow:     ");
             lcd.setCursor(0, 1);
-            String statusLine = String(g_flowRate, 1) + "L/m ";
-            if (g_alertSeverity == 0) statusLine += "OK    ";
-            else if (g_alertSeverity == 1) statusLine += "WARN  ";
-            else statusLine += "ALERT!";
-            lcd.print(statusLine);
+            if (g_flowRate > 0) {
+                lcd.print("ACTIVE          ");
+            } else {
+                lcd.print("STOPPED         ");
+            }
             break;
     }
 }

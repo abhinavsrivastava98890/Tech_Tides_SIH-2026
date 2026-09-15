@@ -32,9 +32,11 @@ function evaluateSensors(sensors) {
     if (sensors.temperature < 5 || sensors.temperature > 45) { state = 'CRITICAL'; faults.push(`Temp (${sensors.temperature}°C)`); }
     else if ((sensors.temperature < 10 || sensors.temperature > 35) && state !== 'CRITICAL') { state = 'WARNING'; faults.push(`Temp (${sensors.temperature}°C)`); }
 
-    // Flow Rate: Safe [>=1.0], Warning [<1.0 and >0], Critical [0]
+    // Flow Rate: Alerts disabled as per user request
+    /*
     if (sensors.flowIn === 0) { state = 'CRITICAL'; faults.push(`Flow (0 L/min)`); }
     else if (sensors.flowIn < 1.0 && state !== 'CRITICAL') { state = 'WARNING'; faults.push(`Flow (${sensors.flowIn} L/min)`); }
+    */
 
     return { state, faults };
 }

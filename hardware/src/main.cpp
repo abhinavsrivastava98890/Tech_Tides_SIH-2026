@@ -67,6 +67,9 @@
 #define DEVICE_ID           "JR-UNIT-001"
 #define FIRMWARE_VERSION    "2.0.0"
 
+// --- Simulation Mode ---
+#define SIMULATE_SENSORS    false    // SET TO FALSE TO USE REAL SENSORS
+
 // --- WiFi Credentials (change to your hotspot) ---
 const char* WIFI_SSID       = "Abhinav";
 const char* WIFI_PASSWORD   = "abhinavv";
@@ -200,62 +203,106 @@ void IRAM_ATTR flowPulseISR();
 // SECTION 5: SENSOR READING FUNCTIONS
 // ============================================================
 
-// --- Helper: Average multiple ADC samples to reduce noise ---
-int averageAnalogRead(int pin) {
-    long sum = 0;
-    for (int i = 0; i < ADC_SAMPLES; i++) {
-        sum += analogRead(pin);
+// --- Helper: Median filter multiple ADC samples to eliminate noise spikes ---
+int getMedianAnalogRead(int pin) {
+    const int NUM_SAMPLES = 25;  // 25 samples for a strong median filter
+    int samples[NUM_SAMPLES];
+    for (int i = 0; i < NUM_SAMPLES; i++) {
+        samples[i] = analogRead(pin);
         delay(2);
     }
-    return sum / ADC_SAMPLES;
+    // Bubble sort to find the median
+    for (int i = 0; i < NUM_SAMPLES - 1; i++) {
+        for (int j = 0; j < NUM_SAMPLES - i - 1; j++) {
+            if (samples[j] > samples[j + 1]) {
+                int temp = samples[j];
+                samples[j] = samples[j + 1];
+                samples[j + 1] = temp;
+            }
+        }
+    }
+    return samples[NUM_SAMPLES / 2];
 }
 
 // --- Turbidity Sensor (Inlet Tank) ---
 // DFRobot SEN0189-style: voltage inversely proportional to turbidity
 float readTurbidity() {
-    int raw = averageAnalogRead(PIN_TURBIDITY);
+#if SIMULATE_SENSORS
+    // Realistic turbidity: 1.5 to 4.5 NTU
+    return 1.5 + (random(0, 30) / 10.0);
+#else
+    int raw = getMedianAnalogRead(PIN_TURBIDITY);
     float voltage = raw * (VREF / ADC_RESOLUTION);
 
     float ntu;
-    if (voltage < 2.5) {
-        ntu = 3000.0;  // Very turbid / sensor saturated
+    // On ESP32 (3.3V), clear water outputs around 2.8V - 3.1V depending on the module.
+    // The datasheet formula is for 5V systems. For 3.3V, we use a mapped approach.
+    if (voltage >= 2.8) {
+        ntu = 0.0; // Clear water
+    } else if (voltage <= 1.0) {
+        ntu = 3000.0; // Extremely turbid
     } else {
-        // Polynomial approximation from sensor datasheet
-        ntu = -1120.4 * voltage * voltage + 5742.3 * voltage - 4352.9;
-        if (ntu < 0) ntu = 0;
+        // Simplified linear mapping for hackathon stability (2.8V = 0 NTU, 1.0V = 3000 NTU)
+        // You can adjust the 2.8 and 1.0 bounds based on your actual raw readings in clear/dirty water.
+        ntu = ((2.8 - voltage) / 1.8) * 3000.0;
     }
+    
+    if (ntu < 0) ntu = 0;
     return ntu;
+#endif
 }
 
 // --- DS18B20 Temperature Sensor (Inlet Tank) ---
 float readTemperature() {
+#if SIMULATE_SENSORS
+    // Realistic temperature: 24.0 to 26.5 °C
+    return 24.0 + (random(0, 25) / 10.0);
+#else
     ds18b20.requestTemperatures();
     float tempC = ds18b20.getTempCByIndex(0);
 
-    // Check for disconnected sensor
-    if (tempC == DEVICE_DISCONNECTED_C || tempC < -50.0) {
-        Serial.println("[TEMP] ERROR: DS18B20 disconnected or read failed!");
-        return g_temperature;  // Return last known good value
+    // 85.0°C is the DS18B20 power-on reset error code (means it hasn't finished reading)
+    if (tempC == 85.0 || tempC == DEVICE_DISCONNECTED_C || tempC < -50.0) {
+        Serial.println("[TEMP] ERROR: DS18B20 disconnected, reading 85.0 error, or failed!");
+        return g_temperature;  // Return last known good value to prevent false criticals
     }
     return tempC;
+#endif
 }
 
 // --- pH Sensor (Post-Filtration) ---
 // Linear approximation — MUST calibrate with pH 4/7/10 buffers
 float readPH() {
-    int raw = averageAnalogRead(PIN_PH);
+#if SIMULATE_SENSORS
+    // Realistic pH: 6.8 to 7.6
+    return 6.8 + (random(0, 8) / 10.0);
+#else
+    int raw = getMedianAnalogRead(PIN_PH);
     float voltage = raw * (VREF / ADC_RESOLUTION);
 
+    // If using a 5V pH sensor on a 3.3V ESP32, the neutral voltage drops (usually around 1.5V - 1.8V).
+    // You may need to adjust PH_NEUTRAL_VOLTAGE (defined as 2.5V above) based on your hardware.
     float ph = 7.0 + ((PH_NEUTRAL_VOLTAGE - voltage) / PH_VOLTS_PER_UNIT);
     if (ph < 0) ph = 0;
     if (ph > 14) ph = 14;
+
     return ph;
+#endif
 }
 
 // --- TDS Sensor (Post-Filtration) ---
 // Temperature-compensated reading using DFRobot formula
 float readTDS(float temperatureC) {
-    int raw = averageAnalogRead(PIN_TDS);
+#if SIMULATE_SENSORS
+    // Realistic TDS: 120 to 180 ppm
+    return 120.0 + random(0, 60);
+#else
+    // Sanity check temperature so noise doesn't corrupt TDS math
+    if (temperatureC <= 0.0 || temperatureC >= 85.0) {
+        temperatureC = 25.0; // Default fallback
+    }
+
+    int raw = getMedianAnalogRead(PIN_TDS);
     float voltage = raw * (VREF / ADC_RESOLUTION);
 
     // Temperature compensation to 25°C reference
@@ -274,6 +321,7 @@ float readTDS(float temperatureC) {
     float tds_calibration_factor = 1.304; 
     
     return tds * tds_calibration_factor;
+#endif
 }
 
 // --- Flow Rate Calculation (from ISR pulse count) ---
@@ -283,6 +331,11 @@ void calculateFlowRate() {
     unsigned long elapsed = now - g_lastFlowCalcMs;
 
     if (elapsed > 0) {
+#if SIMULATE_SENSORS
+        // Realistic Flow: 1.5 to 2.2 L/min
+        g_flowRate = 1.5 + (random(0, 7) / 10.0);
+        g_flowPulseCount = 0;
+#else
         // Disable interrupts briefly to read volatile counter safely
         noInterrupts();
         unsigned long pulses = g_flowPulseCount;
@@ -292,6 +345,7 @@ void calculateFlowRate() {
         // Convert pulses to L/min
         // Formula: flowRate = (pulses / calibrationFactor) / (elapsed / 60000)
         g_flowRate = (pulses / FLOW_CALIBRATION) * (60000.0 / elapsed);
+#endif
     }
     g_lastFlowCalcMs = now;
 }
@@ -347,6 +401,8 @@ int checkThresholds() {
     }
 
     // -- Flow Check --
+    // Flow alerts disabled as per user request
+    /*
     if (g_flowRate == 0.0) {
         // No flow could be pump off — only warn, don't go critical
         if (worst < 1) worst = 1;
@@ -357,6 +413,7 @@ int checkThresholds() {
         if (g_alertMessage.length() == 0)
             g_alertMessage = "Flow LOW: " + String(g_flowRate, 2) + " L/min";
     }
+    */
 
     return worst;
 }
@@ -537,6 +594,7 @@ void sendTelemetry() {
 
     // HTTP POST
     HTTPClient http;
+    http.setTimeout(10000); // 10 seconds timeout to prevent -11 errors
     String url = String(BACKEND_URL) + "/telemetry";
     http.begin(url);
     http.addHeader("Content-Type", "application/json");
@@ -587,6 +645,7 @@ void sendAlert(int severity, const String& faultName, const String& message) {
 
     // HTTP POST
     HTTPClient http;
+    http.setTimeout(10000); // 10 seconds timeout to prevent -11 errors
     String url = String(BACKEND_URL) + "/alerts";
     http.begin(url);
     http.addHeader("Content-Type", "application/json");

@@ -14,8 +14,9 @@ import RecentAlerts from './components/RecentAlerts';
 import { alertService, telemetryService } from '../../services/api';
 
 export default function Dashboard() {
-  const [activeAlertsCount, setActiveAlertsCount] = useState(3);
-  const [onlineUnits, setOnlineUnits] = useState(128);
+  const [activeAlertsCount, setActiveAlertsCount] = useState(0);
+  const [onlineUnits, setOnlineUnits] = useState(0);
+  const [totalSites, setTotalSites] = useState(0);
 
   useEffect(() => {
     const fetchGlobalStats = async () => {
@@ -25,10 +26,13 @@ export default function Dashboard() {
           setActiveAlertsCount(alertsRes.data.length);
         }
         
-        // If we get telemetry from ESP32, increment online units by 1
         const telRes = await telemetryService.getLatest();
         if (telRes.success && telRes.data) {
-          setOnlineUnits(129); // 128 mock + 1 real ESP32
+          setOnlineUnits(1);
+          setTotalSites(1);
+        } else {
+          setOnlineUnits(0);
+          setTotalSites(0);
         }
       } catch (error) {
         console.error('Failed to load global stats');
@@ -47,18 +51,18 @@ export default function Dashboard() {
           <p className="text-sm text-muted mt-1">Overview of JalRakshak water treatment network.</p>
         </div>
         <div className="text-sm text-muted">
-          Last updated: <span className="font-medium text-slate-700">Just now</span>
+          Last updated: <span className="font-medium text-slate-700">Live</span>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
-        <KPICard title="Total Sites" value="142" icon={Building2} colorClass="bg-accent" />
+        <KPICard title="Total Sites" value={totalSites} icon={Building2} colorClass="bg-accent" />
         <KPICard title="Online Units" value={onlineUnits} icon={Wifi} colorClass="bg-success" />
-        <KPICard title="Offline Units" value="14" icon={WifiOff} colorClass="bg-status-offline" />
+        <KPICard title="Offline Units" value={totalSites - onlineUnits} icon={WifiOff} colorClass="bg-status-offline" />
         <KPICard title="Critical Alerts" value={activeAlertsCount} icon={AlertOctagon} colorClass="bg-danger" />
-        <KPICard title="Water Treated (Today)" value="2.4M" subtitle="Liters" icon={Droplets} colorClass="bg-teal" />
-        <KPICard title="Maintenance Due" value="12" icon={Wrench} colorClass="bg-warning" />
+        <KPICard title="Water Treated (Today)" value="Live" subtitle="Tracking" icon={Droplets} colorClass="bg-teal" />
+        <KPICard title="Maintenance Due" value="0" icon={Wrench} colorClass="bg-warning" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

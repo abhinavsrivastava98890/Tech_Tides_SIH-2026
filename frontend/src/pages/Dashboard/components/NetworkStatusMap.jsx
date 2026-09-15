@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { telemetryService } from '../../../services/api';
 
 // Fix for default marker icons in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -10,17 +12,33 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Mock locations in Jharkhand
-const mockSites = [
-  { id: 1, name: "Dhanbad Plant A", lat: 23.7915, lng: 86.4304, status: "safe" },
-  { id: 2, name: "Bokaro Sector 4", lat: 23.6693, lng: 86.1511, status: "warning" },
-  { id: 3, name: "Ranchi Kanke", lat: 23.3441, lng: 85.3096, status: "safe" },
-  { id: 4, name: "Palamu Village", lat: 24.0333, lng: 84.0667, status: "critical" },
-  { id: 5, name: "Sahibganj River", lat: 25.2425, lng: 87.6469, status: "offline" }
-];
-
 export default function NetworkStatusMap() {
   const jharkhandCenter = [23.6102, 85.2799]; // Approximate center of Jharkhand
+  const [liveSite, setLiveSite] = useState(null);
+
+  useEffect(() => {
+    const fetchTelemetry = async () => {
+      try {
+        const response = await telemetryService.getLatest();
+        if (response.success && response.data) {
+          setLiveSite({
+            id: response.data.deviceId,
+            name: "ESP32 Live Node",
+            lat: 23.6102, // Hardcoded for this prototype
+            lng: 85.2799,
+            status: response.data.systemState
+          });
+        } else {
+          setLiveSite(null);
+        }
+      } catch (error) {
+        console.error('Failed to load map data');
+      }
+    };
+    fetchTelemetry();
+    const interval = setInterval(fetchTelemetry, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
@@ -31,16 +49,16 @@ export default function NetworkStatusMap() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {mockSites.map(site => (
-            <Marker key={site.id} position={[site.lat, site.lng]}>
+          {liveSite && (
+            <Marker position={[liveSite.lat, liveSite.lng]}>
               <Popup>
                 <div className="text-sm">
-                  <p className="font-semibold">{site.name}</p>
-                  <p className="capitalize text-muted">Status: {site.status}</p>
+                  <p className="font-semibold">{liveSite.name} ({liveSite.id})</p>
+                  <p className="text-muted">Status: <span className="font-bold">{liveSite.status}</span></p>
                 </div>
               </Popup>
             </Marker>
-          ))}
+          )}
         </MapContainer>
       </div>
       <div className="flex gap-4 mt-4 text-sm text-muted">

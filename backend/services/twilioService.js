@@ -40,7 +40,11 @@ exports.makeCall = async (message) => {
     if (!client) return;
     try {
         // TwiML (Twilio Markup Language) to say the message using Text-to-Speech
-        const twimlMessage = `<Response><Say voice="Polly.Aditi">${message}</Say></Response>`;
+        const twimlMessage = `
+            <Response>
+                <Say>Attention! This is an emergency alert from the Jal Rakshak system. ${message}</Say>
+            </Response>
+        `;
         
         await client.calls.create({
             twiml: twimlMessage,

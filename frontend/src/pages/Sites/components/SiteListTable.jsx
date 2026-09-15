@@ -1,16 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Filter, MoreVertical, Search, CheckCircle2, AlertTriangle, XCircle, MapPin } from 'lucide-react';
-
-const mockSites = [
-  { id: 'JR-DH-01', village: 'Baliapur', district: 'Dhanbad', block: 'Baliapur', source: 'Groundwater', population: 2400, unit: 'Online', water: 'Safe', lastTest: '2 Days Ago' },
-  { id: 'JR-DH-02', village: 'Tundi', district: 'Dhanbad', block: 'Tundi', source: 'Handpump', population: 1200, unit: 'Online', water: 'Safe', lastTest: '5 Days Ago' },
-  { id: 'JR-BK-04', village: 'Chas', district: 'Bokaro', block: 'Chas', source: 'Surface Water', population: 3500, unit: 'Warning', water: 'Safe', lastTest: '1 Week Ago' },
-  { id: 'JR-PL-02', village: 'Hussainabad', district: 'Palamu', block: 'Hussainabad', source: 'Groundwater', population: 4100, unit: 'Online', water: 'Critical', lastTest: 'Today' },
-  { id: 'JR-SG-07', village: 'Barhait', district: 'Sahibganj', block: 'Barhait', source: 'Groundwater', population: 1800, unit: 'Maintenance', water: 'Warning', lastTest: '3 Days Ago' },
-];
+import { telemetryService } from '../../../services/api';
 
 export default function SiteListTable({ onSelectSite }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [sites, setSites] = useState([]);
+
+  useEffect(() => {
+    const fetchSites = async () => {
+      try {
+        const response = await telemetryService.getLatest();
+        if (response.success && response.data) {
+           const telemetry = response.data;
+           let waterStatus = 'Unknown';
+           if (telemetry.systemState === 'PASS' || telemetry.systemState === 'FILTRATION' || telemetry.systemState === 'UV_ACTIVE') {
+             waterStatus = 'Safe';
+           } else if (telemetry.systemState === 'REJECT' || telemetry.systemState === 'CRITICAL' || telemetry.systemState === 'FAULT') {
+             waterStatus = 'Critical';
+           } else {
+             waterStatus = 'Warning';
+           }
+
+           const realSite = {
+             id: telemetry.deviceId,
+             village: 'Test Bench',
+             district: 'Lab',
+             block: 'Local',
+             source: 'Simulated',
+             population: 1,
+             unit: 'Online',
+             water: waterStatus,
+             lastTest: 'Live'
+           };
+           setSites([realSite]);
+        } else {
+           setSites([]);
+        }
+      } catch (err) {
+        console.error('Failed to load sites');
+      }
+    };
+    fetchSites();
+    const int = setInterval(fetchSites, 10000);
+    return () => clearInterval(int);
+  }, []);
 
   const StatusBadge = ({ status }) => {
     let color = 'bg-slate-100 text-slate-700';
@@ -82,7 +115,7 @@ export default function SiteListTable({ onSelectSite }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {mockSites.filter(s => s.village.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase())).map((row) => (
+            {sites.filter(s => s.village.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase())).map((row) => (
               <tr key={row.id} className="hover:bg-card transition-colors cursor-pointer" onClick={() => onSelectSite(row)}>
                 <td className="px-6 py-4 font-medium text-text">{row.id}</td>
                 <td className="px-6 py-4">

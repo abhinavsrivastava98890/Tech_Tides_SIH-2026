@@ -131,30 +131,17 @@ exports.getLatestTelemetry = async (req, res) => {
         // Get the most recent telemetry point for each device (assuming only 1 device for now)
         let latest = await Telemetry.findOne().sort({ timestamp: -1 });
         
-        if (latest && latest.sensors) {
-            latest = latest.toObject();
-            // STATIC OVERRIDE FOR SAFE RANGE (Only sensor values, keeping true systemState)
-            latest.sensors.ph = 7.2;
-            latest.sensors.turbidityOut = 2.1;
-            latest.sensors.flowIn = 1.8;
-        } else if (!latest) {
-            // Mock data if no data exists
-            latest = {
-                deviceId: "JAL-MOCK-01",
-                timestamp: new Date(),
-                systemState: "NORMAL",
-                sensors: {
-                    ph: 7.2,
-                    tds: 210,
-                    turbidityOut: 2.1,
-                    turbidityRaw: 15.0,
-                    temperature: 24.5,
-                    flowIn: 1.8
-                }
-            };
+        if (!latest) {
+            return res.status(404).json({
+                success: false,
+                message: 'No telemetry data found'
+            });
         }
         
-        res.status(200).json({ success: true, data: latest });
+        res.status(200).json({
+            success: true,
+            data: latest
+        });
     } catch (error) {
         console.error('Error fetching latest telemetry:', error);
         res.status(500).json({ success: false, error: 'Server Error' });

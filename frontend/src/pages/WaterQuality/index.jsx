@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { FileText, Plus, Filter, Download, Droplet } from 'lucide-react';
 
-const mockLabTests = [
-  { id: 'WT-001', site: 'JR-DH-01', date: '2024-08-10', parameter: 'Fluoride', result: 1.8, limit: 1.5, unit: 'mg/L', status: 'Elevated' },
-  { id: 'WT-002', site: 'JR-DH-01', date: '2024-08-10', parameter: 'Iron', result: 0.2, limit: 0.3, unit: 'mg/L', status: 'Safe' },
-  { id: 'WT-003', site: 'JR-SG-07', date: '2024-08-05', parameter: 'Arsenic', result: 0.04, limit: 0.01, unit: 'mg/L', status: 'Critical' },
-  { id: 'WT-004', site: 'JR-PL-02', date: '2024-08-01', parameter: 'Nitrate', result: 42, limit: 45, unit: 'mg/L', status: 'Warning' },
-];
 
 export default function WaterQuality() {
   const [activeTab, setActiveTab] = useState('tests');
@@ -79,28 +73,12 @@ export default function WaterQuality() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {mockLabTests.map((test) => (
-                <tr key={test.id} className="hover:bg-card">
-                  <td className="px-4 py-4 font-medium text-text">{test.id}</td>
-                  <td className="px-4 py-4 text-primary cursor-pointer hover:underline">{test.site}</td>
-                  <td className="px-4 py-4 text-muted">{test.date}</td>
-                  <td className="px-4 py-4 font-medium text-slate-800">{test.parameter}</td>
-                  <td className="px-4 py-4 text-right font-semibold">{test.result} <span className="text-xs font-normal text-muted">{test.unit}</span></td>
-                  <td className="px-4 py-4 text-right text-muted">{test.limit} <span className="text-xs">{test.unit}</span></td>
-                  <td className="px-4 py-4 text-center">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                      test.status === 'Safe' ? 'bg-green-100 text-green-700' :
-                      test.status === 'Warning' || test.status === 'Elevated' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {test.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 text-slate-400 hover:text-primary cursor-pointer">
-                    <FileText className="w-5 h-5" />
-                  </td>
-                </tr>
-              ))}
+              {/* Empty state for live implementation */}
+              <tr>
+                <td colSpan="8" className="px-4 py-8 text-center text-slate-500">
+                  No specialized lab test records found in the database.
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

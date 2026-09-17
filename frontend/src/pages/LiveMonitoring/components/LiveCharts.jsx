@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from 'react-i18next';
 import { telemetryService } from '../../../services/api';
 
 export default function LiveCharts() {
+  const { t } = useTranslation();
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,20 +45,20 @@ export default function LiveCharts() {
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border p-5 h-full">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-slate-800">Live Event Stream</h3>
+        <h3 className="text-lg font-semibold text-slate-800">{t('live_event_stream')}</h3>
         <span className="text-xs text-slate-400">
-          {chartData.length > 0 ? `${chartData.length} readings` : 'Waiting for data...'}
+          {chartData.length > 0 ? `${chartData.length} ${t('readings')}` : t('waiting_for_data')}
         </span>
       </div>
 
       <div className="h-[250px] w-full">
         {loading ? (
           <div className="flex items-center justify-center h-full text-slate-400">
-            Loading sensor history...
+            {t('loading_sensor_history')}
           </div>
         ) : chartData.length === 0 ? (
           <div className="flex items-center justify-center h-full text-slate-400">
-            No telemetry data available yet. Start the ESP32 to see live charts.
+            {t('no_telemetry_start_esp32')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">

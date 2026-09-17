@@ -1,5 +1,6 @@
-import { RefreshCw, Bell } from 'lucide-react';
+import { RefreshCw, Bell, Globe } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SensorCard from './components/SensorCard';
 import WaterSafetyStatus from './components/WaterSafetyStatus';
 import TreatmentPerformance from './components/TreatmentPerformance';
@@ -51,6 +52,16 @@ export default function LiveMonitoring() {
   const [deviceId, setDeviceId] = useState('--');
   const [loading, setLoading] = useState(true);
   const { isSubscribed, isLoading, toggleSubscription } = usePushNotifications();
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  const languages = [
+    { code: 'hi', label: 'Hindi' },
+    { code: 'en', label: 'English' },
+    { code: 'sat', label: 'Santhali' },
+    { code: 'bn', label: 'Bengali' },
+    { code: 'khr', label: 'Khortha/Nagpuri' }
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,33 +102,63 @@ export default function LiveMonitoring() {
       <div className="bg-card rounded-lg shadow-sm border border-border p-5 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
           <div className="flex items-center space-x-3 mb-1">
-            <h1 className="text-2xl font-bold text-text">Live Monitoring</h1>
+            <h1 className="text-2xl font-bold text-text">{t('live_monitoring')}</h1>
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${
               sensorData ? 'bg-green-100 text-green-700 border-green-200' : 'bg-slate-100 text-muted border-border'
             }`}>
-              {sensorData ? 'Online' : 'Offline'}
+              {sensorData ? t('online') : t('offline')}
             </span>
           </div>
           <div className="text-sm text-muted flex items-center space-x-4">
-            <span>Unit ID: {deviceId}</span>
-            <span>Last Data: {getTimeAgo()}</span>
+            <span>{t('unit_id')} {deviceId}</span>
+            <span>{t('last_data')} {getTimeAgo()}</span>
           </div>
         </div>
         <div className="mt-4 md:mt-0 flex items-center space-x-4 text-sm">
           <div className="flex items-center text-muted">
             <RefreshCw className={`w-4 h-4 mr-2 ${sensorData ? 'animate-spin-slow' : ''}`} />
-            Last heartbeat: {sensorData ? getTimeAgo() : 'N/A'}
+            {t('last_heartbeat')} {sensorData ? getTimeAgo() : 'N/A'}
           </div>
           <button 
             onClick={toggleSubscription}
             disabled={isLoading}
-            className={`${isSubscribed ? 'bg-slate-200 text-slate-700' : 'bg-card text-slate-700'} border border-border px-4 py-2 rounded-md hover:bg-slate-100 transition-colors font-medium shadow-sm flex items-center disabled:opacity-50`}
+            title={isLoading ? t('wait') : isSubscribed ? t('notifications_on') : t('enable_notifications')}
+            className="relative p-2 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200 disabled:opacity-50"
           >
-            <Bell className={`w-4 h-4 mr-2 ${isSubscribed ? 'fill-current text-yellow-500' : ''}`} />
-            {isLoading ? 'Wait...' : isSubscribed ? 'Notifications On' : 'Enable Notifications'}
+            <Bell className="w-5 h-5" />
+            {isSubscribed && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-500 rounded-full border-2 border-white"></span>
+            )}
           </button>
+          <div className="relative">
+            <button 
+              onClick={() => setIsLangOpen(!isLangOpen)}
+              className="relative p-2 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200"
+              title="Change Language"
+            >
+              <Globe className="w-5 h-5" />
+            </button>
+            {isLangOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-slate-200 z-50 overflow-hidden">
+                <div className="py-1">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 hover:text-slate-900 ${i18n.language === lang.code ? 'bg-slate-50 text-blue-600 font-medium' : 'text-slate-700'}`}
+                      onClick={() => {
+                        i18n.changeLanguage(lang.code);
+                        setIsLangOpen(false);
+                      }}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           <button className="bg-card border border-border text-slate-700 px-4 py-2 rounded-md hover:bg-card transition-colors font-medium shadow-sm">
-            Configure Unit
+            {t('configure_unit')}
           </button>
         </div>
       </div>
@@ -127,48 +168,48 @@ export default function LiveMonitoring() {
         <div className="lg:col-span-2 space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <SensorCard 
-              title="pH Level" 
+              title={t('ph_level')} 
               value={sensorData?.ph != null ? sensorData.ph.toFixed(2) : '--'} 
               unit="" 
               normalRange="6.5 - 8.5" 
               status={getSensorStatus('ph', sensorData?.ph)} 
-              time={sensorData ? 'Live' : 'Offline'} 
+              time={sensorData ? t('online') : t('offline')} 
               trend="stable" 
             />
             <SensorCard 
-              title="TDS" 
+              title={t('tds')} 
               value={sensorData?.tds != null ? Math.round(sensorData.tds).toString() : '--'} 
               unit="ppm" 
               normalRange="< 500" 
               status={getSensorStatus('tds', sensorData?.tds)} 
-              time={sensorData ? 'Live' : 'Offline'} 
+              time={sensorData ? t('online') : t('offline')} 
               trend="stable" 
             />
             <SensorCard 
-              title="Turbidity" 
+              title={t('turbidity')} 
               value={sensorData?.turbidityOut != null ? sensorData.turbidityOut.toFixed(1) : '--'} 
               unit="NTU" 
               normalRange="< 5" 
               status={getSensorStatus('turbidity', sensorData?.turbidityOut)} 
-              time={sensorData ? 'Live' : 'Offline'} 
+              time={sensorData ? t('online') : t('offline')} 
               trend="stable" 
             />
             <SensorCard 
-              title="Temperature" 
+              title={t('temperature')} 
               value={sensorData?.temperature != null ? sensorData.temperature.toFixed(1) : '--'} 
               unit="°C" 
               normalRange="10 - 35" 
               status={getSensorStatus('temperature', sensorData?.temperature)} 
-              time={sensorData ? 'Live' : 'Offline'} 
+              time={sensorData ? t('online') : t('offline')} 
               trend="stable" 
             />
             <SensorCard 
-              title="Flow Rate" 
+              title={t('flow_rate')} 
               value={sensorData?.flowIn != null ? sensorData.flowIn.toFixed(2) : '--'} 
               unit="L/min" 
               normalRange="> 0.5" 
               status={getSensorStatus('flow', sensorData?.flowIn)} 
-              time={sensorData ? 'Live' : 'Offline'} 
+              time={sensorData ? t('online') : t('offline')} 
               trend="stable" 
             />
           </div>
@@ -183,10 +224,10 @@ export default function LiveMonitoring() {
           </div>
           
           <div className="bg-card rounded-lg shadow-sm border border-border p-5">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Treatment Performance</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('treatment_performance')}</h3>
             <div className="space-y-4">
               <TreatmentPerformance 
-                parameter="Turbidity" 
+                parameter={t('turbidity')} 
                 inlet={sensorData?.turbidityRaw != null && sensorData.turbidityRaw >= 0 ? sensorData.turbidityRaw.toFixed(1) : '--'} 
                 outlet={sensorData?.turbidityOut != null ? sensorData.turbidityOut.toFixed(1) : '--'} 
                 unit="NTU" 
@@ -198,7 +239,7 @@ export default function LiveMonitoring() {
                 isWarning={getSensorStatus('turbidity', sensorData?.turbidityOut) !== 'safe'} 
               />
               <TreatmentPerformance 
-                parameter="TDS" 
+                parameter={t('tds')} 
                 inlet="--" 
                 outlet={sensorData?.tds != null ? Math.round(sensorData.tds).toString() : '--'} 
                 unit="ppm" 

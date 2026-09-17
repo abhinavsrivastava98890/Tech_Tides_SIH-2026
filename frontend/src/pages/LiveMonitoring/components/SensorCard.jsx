@@ -1,6 +1,8 @@
 import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function SensorCard({ title, value, unit, normalRange, status, time, trend }) {
+  const { t } = useTranslation();
   let statusColor = 'text-success';
   let bgColor = 'bg-green-50 border-green-200';
   
@@ -36,7 +38,7 @@ export default function SensorCard({ title, value, unit, normalRange, status, ti
         <span className="ml-1 text-xs sm:text-sm font-medium text-muted">{unit}</span>
       </div>
       <div className="flex justify-between flex-wrap text-[10px] sm:text-xs text-muted mt-2 sm:mt-3 gap-1">
-        <span>Range: {normalRange}</span>
+        <span>{t('range')} {normalRange}</span>
         <span>{time}</span>
       </div>
     </div>

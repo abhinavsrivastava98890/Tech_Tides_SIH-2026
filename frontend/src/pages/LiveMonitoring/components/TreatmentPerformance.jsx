@@ -1,6 +1,8 @@
 import { Droplets } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function TreatmentPerformance({ parameter, inlet, outlet, unit, removalPercent, isWarning = false }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
       <div className="flex items-center justify-between mb-3">
@@ -9,13 +11,13 @@ export default function TreatmentPerformance({ parameter, inlet, outlet, unit, r
           {parameter}
         </h4>
         <span className={`text-xs font-bold px-2 py-1 rounded-full ${isWarning ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
-          {removalPercent}% Reduction
+          {removalPercent}% {t('reduction')}
         </span>
       </div>
       
       <div className="flex justify-between items-center text-sm">
         <div className="text-center">
-          <p className="text-muted mb-1">Inlet</p>
+          <p className="text-muted mb-1">{t('inlet')}</p>
           <p className="font-bold text-slate-800">{inlet} <span className="text-xs font-normal text-muted">{unit}</span></p>
         </div>
         
@@ -27,7 +29,7 @@ export default function TreatmentPerformance({ parameter, inlet, outlet, unit, r
         </div>
 
         <div className="text-center">
-          <p className="text-muted mb-1">Outlet</p>
+          <p className="text-muted mb-1">{t('outlet')}</p>
           <p className="font-bold text-slate-800">{outlet} <span className="text-xs font-normal text-muted">{unit}</span></p>
         </div>
       </div>

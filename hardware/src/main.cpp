@@ -64,7 +64,7 @@
 
 // --- Buzzer Enable ---
 // Set to false to completely silence the buzzer (LED still shows alerts)
-#define BUZZER_ENABLED      false
+#define BUZZER_ENABLED      true
 
 // I2C LCD uses default ESP32 I2C pins: SDA=21, SCL=22
 
@@ -175,6 +175,10 @@ unsigned long g_lastAlertTime_flow       = 0;
 // --- Buzzer State (non-blocking beep) ---
 bool g_buzzerOn = false;
 unsigned long g_lastBuzzerToggleMs = 0;
+
+// --- LED Blink State (for critical blinking) ---
+bool g_ledBlinkOn = false;
+unsigned long g_lastLedToggleMs = 0;
 
 // --- Alert Counter (for unique alert IDs) ---
 unsigned long g_alertCounter = 0;
@@ -421,16 +425,18 @@ int checkThresholds() {
 }
 
 // --- Buzzer Control (non-blocking beep patterns) ---
-// NOTE: Active-LOW buzzer — HIGH=OFF, LOW=ON
+// Wiring: 5V → Buzzer(+), GPIO 14 → Buzzer(-)
+// Trick: Use pinMode(INPUT) to disconnect ground = complete silence even with 5V
+//        Use pinMode(OUTPUT)+LOW to connect ground = buzzer sounds
 void updateBuzzer(int severity) {
 #if !BUZZER_ENABLED
-    // Buzzer disabled — keep pin HIGH (silent for active-low buzzer)
-    digitalWrite(PIN_BUZZER, HIGH);
+    // Buzzer disabled — disconnect ground path completely
+    pinMode(PIN_BUZZER, INPUT);
     return;
 #endif
     if (severity == 0) {
-        // NORMAL — buzzer OFF (HIGH = OFF for active-low)
-        digitalWrite(PIN_BUZZER, HIGH);
+        // NORMAL — buzzer OFF (disconnect ground by making pin float)
+        pinMode(PIN_BUZZER, INPUT);
         g_buzzerOn = false;
         return;
     }
@@ -441,41 +447,56 @@ void updateBuzzer(int severity) {
     unsigned long now = millis();
     if (now - g_lastBuzzerToggleMs >= beepInterval) {
         g_buzzerOn = !g_buzzerOn;
-        // Active-low: LOW=ON, HIGH=OFF
-        digitalWrite(PIN_BUZZER, g_buzzerOn ? LOW : HIGH);
+        if (g_buzzerOn) {
+            // ON: connect ground path → current flows → buzzer sounds
+            pinMode(PIN_BUZZER, OUTPUT);
+            digitalWrite(PIN_BUZZER, LOW);
+        } else {
+            // OFF: disconnect ground → no current → silence
+            pinMode(PIN_BUZZER, INPUT);
+        }
         g_lastBuzzerToggleMs = now;
     }
 }
 
 // --- RGB LED Control based on severity ---
-// Handles both Common Anode (COMMON_ANODE=1) and Common Cathode (COMMON_ANODE=0)
+// RED is dead on GPIO 25, using GREEN + BLUE only:
+//   NORMAL  = solid GREEN
+//   WARNING = solid BLUE
+//   CRITICAL = handled by updateLed() (BLUE fast blink)
 void setRGBLed(int severity) {
-    // For Common Anode: LOW = ON, HIGH = OFF
-    // For Common Cathode: HIGH = ON, LOW = OFF
-    #if COMMON_ANODE
-        #define LED_ON  LOW
-        #define LED_OFF HIGH
-    #else
-        #define LED_ON  HIGH
-        #define LED_OFF LOW
-    #endif
-
     switch (severity) {
         case 0:  // NORMAL — solid GREEN
-            digitalWrite(PIN_LED_RED,   LED_OFF);
-            digitalWrite(PIN_LED_GREEN, LED_ON);
-            digitalWrite(PIN_LED_BLUE,  LED_OFF);
+            digitalWrite(PIN_LED_RED,   LOW);
+            digitalWrite(PIN_LED_GREEN, HIGH);
+            digitalWrite(PIN_LED_BLUE,  LOW);
             break;
-        case 1:  // WARNING — solid YELLOW (Red + Green)
-            digitalWrite(PIN_LED_RED,   LED_ON);
-            digitalWrite(PIN_LED_GREEN, LED_ON);
-            digitalWrite(PIN_LED_BLUE,  LED_OFF);
+        case 1:  // WARNING — solid BLUE
+            digitalWrite(PIN_LED_RED,   LOW);
+            digitalWrite(PIN_LED_GREEN, LOW);
+            digitalWrite(PIN_LED_BLUE,  HIGH);
             break;
-        case 2:  // CRITICAL — solid RED
-            digitalWrite(PIN_LED_RED,   LED_ON);
-            digitalWrite(PIN_LED_GREEN, LED_OFF);
-            digitalWrite(PIN_LED_BLUE,  LED_OFF);
+        case 2:  // CRITICAL — don't set here, updateLed() handles blinking
+            digitalWrite(PIN_LED_RED,   LOW);
+            digitalWrite(PIN_LED_GREEN, LOW);
+            // BLUE handled by updateLed()
             break;
+    }
+}
+
+// --- LED Blink for CRITICAL (non-blocking, runs every loop) ---
+void updateLed(int severity) {
+    if (severity != 2) {
+        // Not critical, reset blink state
+        g_ledBlinkOn = false;
+        return;
+    }
+    // CRITICAL — fast blink BLUE (200ms interval)
+    unsigned long now = millis();
+    if (now - g_lastLedToggleMs >= 200) {
+        g_ledBlinkOn = !g_ledBlinkOn;
+        digitalWrite(PIN_LED_BLUE, g_ledBlinkOn ? HIGH : LOW);
+        g_lastLedToggleMs = now;
     }
 }
 
@@ -727,6 +748,23 @@ void setup() {
     digitalWrite(PIN_LED_BLUE, LOW);
     Serial.println("[LED] RGB LED initialized.");
 
+    // --- LED DIAGNOSTIC TEST (watch which color lights up for each pin) ---
+    Serial.println("[LED TEST] Testing RED on GPIO 25...");
+    digitalWrite(PIN_LED_RED, HIGH);
+    delay(1500);
+    digitalWrite(PIN_LED_RED, LOW);
+
+    Serial.println("[LED TEST] Testing GREEN on GPIO 26...");
+    digitalWrite(PIN_LED_GREEN, HIGH);
+    delay(1500);
+    digitalWrite(PIN_LED_GREEN, LOW);
+
+    Serial.println("[LED TEST] Testing BLUE on GPIO 27...");
+    digitalWrite(PIN_LED_BLUE, HIGH);
+    delay(1500);
+    digitalWrite(PIN_LED_BLUE, LOW);
+    Serial.println("[LED TEST] Done! Check which color lit for each GPIO above.");
+
     // --- Initialize Buzzer ---
     pinMode(PIN_BUZZER, OUTPUT);
     digitalWrite(PIN_BUZZER, HIGH);  // HIGH = OFF for active-low buzzer
@@ -808,9 +846,10 @@ void loop() {
     }
 
     // ----------------------------------------------------------
-    // 2. BUZZER UPDATE (runs every loop iteration for smooth beeping)
+    // 2. BUZZER + LED UPDATE (runs every loop iteration for smooth blinking)
     // ----------------------------------------------------------
     updateBuzzer(g_alertSeverity);
+    updateLed(g_alertSeverity);
 
     // ----------------------------------------------------------
     // 3. LCD DISPLAY CYCLE (every 3 seconds)

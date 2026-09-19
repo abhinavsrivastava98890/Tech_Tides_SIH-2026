@@ -28,7 +28,7 @@ export default function SensorCard({ title, value, unit, normalRange, status, ti
   }
 
   return (
-    <div className={`rounded-lg border p-3 sm:p-4 shadow-sm ${bgColor}`}>
+    <div className={`rounded-lg border p-3 sm:p-4 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ${bgColor}`}>
       <div className="flex justify-between items-start mb-1 sm:mb-2">
         <h3 className="text-xs sm:text-sm font-medium text-slate-700 leading-tight pr-1">{title}</h3>
         <TrendIcon className={`w-3 h-3 sm:w-4 sm:h-4 shrink-0 ${trendColor}`} />

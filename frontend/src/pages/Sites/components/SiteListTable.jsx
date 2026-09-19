@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Filter, MoreVertical, Search, CheckCircle2, AlertTriangle, XCircle, MapPin } from 'lucide-react';
 import { telemetryService } from '../../../services/api';
+import AddSiteModal from './AddSiteModal';
 
 export default function SiteListTable({ onSelectSite }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sites, setSites] = useState([]);
+  const [addedSites, setAddedSites] = useState([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    unitStatus: 'All',
+    waterQuality: 'All',
+    sourceType: 'All'
+  });
 
   useEffect(() => {
     const fetchSites = async () => {
@@ -32,9 +41,9 @@ export default function SiteListTable({ onSelectSite }) {
              water: waterStatus,
              lastTest: 'Live'
            };
-           setSites([realSite]);
+           setSites((prevAdded) => [realSite, ...prevAdded.filter(s => s.id !== realSite.id)]);
         } else {
-           setSites([]);
+           setSites((prevAdded) => [...prevAdded]);
         }
       } catch (err) {
         console.error('Failed to load sites');
@@ -44,6 +53,22 @@ export default function SiteListTable({ onSelectSite }) {
     const int = setInterval(fetchSites, 10000);
     return () => clearInterval(int);
   }, []);
+
+  const handleAddSite = (formData) => {
+    const newSite = {
+      id: formData.siteId,
+      village: formData.village,
+      district: formData.district,
+      block: formData.block,
+      source: formData.sourceType,
+      population: parseInt(formData.population, 10) || 0,
+      unit: 'Offline', // default new sites to offline until they connect
+      water: 'Unknown',
+      lastTest: 'Never'
+    };
+    // Append to sites state so it shows up immediately
+    setSites(prev => [...prev, newSite]);
+  };
 
   const StatusBadge = ({ status }) => {
     let color = 'bg-slate-100 text-slate-700';
@@ -89,12 +114,85 @@ export default function SiteListTable({ onSelectSite }) {
             className="block w-full pl-10 pr-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 border border-border rounded-md text-sm font-medium text-slate-700 bg-card hover:bg-card">
+        <div className="flex gap-2 w-full sm:w-auto relative">
+          <button 
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 border border-border rounded-md text-sm font-medium text-slate-700 bg-card hover:bg-slate-50 transition-colors focus:outline-none"
+          >
             <Filter className="w-4 h-4 mr-2" />
             Filters
+            {(filters.unitStatus !== 'All' || filters.waterQuality !== 'All' || filters.sourceType !== 'All') && (
+              <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
+            )}
           </button>
-          <button className="flex-1 sm:flex-none px-4 py-2 bg-accent text-white rounded-md text-sm font-medium hover:bg-accent/90 transition-colors">
+
+          {isFilterOpen && (
+            <div className="absolute top-full right-0 mt-2 w-64 bg-white border border-slate-200 shadow-xl rounded-lg z-50 p-4">
+              <h3 className="font-semibold text-slate-800 mb-3 text-sm">Filter Sites</h3>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Unit Status</label>
+                  <select 
+                    value={filters.unitStatus} 
+                    onChange={e => setFilters({...filters, unitStatus: e.target.value})}
+                    className="w-full text-sm border-slate-200 rounded p-1.5 focus:ring-1 focus:ring-blue-500 outline-none"
+                  >
+                    <option value="All">All</option>
+                    <option value="Online">Online</option>
+                    <option value="Offline">Offline</option>
+                    <option value="Maintenance">Maintenance</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Water Quality</label>
+                  <select 
+                    value={filters.waterQuality} 
+                    onChange={e => setFilters({...filters, waterQuality: e.target.value})}
+                    className="w-full text-sm border-slate-200 rounded p-1.5 focus:ring-1 focus:ring-blue-500 outline-none"
+                  >
+                    <option value="All">All</option>
+                    <option value="Safe">Safe</option>
+                    <option value="Warning">Warning</option>
+                    <option value="Critical">Critical</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">Source Type</label>
+                  <select 
+                    value={filters.sourceType} 
+                    onChange={e => setFilters({...filters, sourceType: e.target.value})}
+                    className="w-full text-sm border-slate-200 rounded p-1.5 focus:ring-1 focus:ring-blue-500 outline-none"
+                  >
+                    <option value="All">All</option>
+                    <option value="Borewell">Borewell</option>
+                    <option value="Simulated">Simulated</option>
+                    <option value="Surface Water">Surface Water</option>
+                    <option value="Municipal Supply">Municipal Supply</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
+                <button 
+                  onClick={() => setIsFilterOpen(false)}
+                  className="text-xs text-slate-500 hover:text-slate-700"
+                >
+                  Close
+                </button>
+                <button 
+                  onClick={() => setFilters({unitStatus: 'All', waterQuality: 'All', sourceType: 'All'})}
+                  className="text-xs font-medium text-blue-600 hover:text-blue-800"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          )}
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex-1 sm:flex-none px-4 py-2 bg-accent text-white rounded-md text-sm font-medium hover:bg-accent/90 transition-colors"
+          >
             + Add New Site
           </button>
         </div>
@@ -115,7 +213,13 @@ export default function SiteListTable({ onSelectSite }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {sites.filter(s => s.village.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase())).map((row) => (
+            {sites.filter(s => {
+              const matchesSearch = s.village.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase());
+              const matchesUnit = filters.unitStatus === 'All' || s.unit === filters.unitStatus;
+              const matchesWater = filters.waterQuality === 'All' || s.water === filters.waterQuality;
+              const matchesSource = filters.sourceType === 'All' || s.source === filters.sourceType;
+              return matchesSearch && matchesUnit && matchesWater && matchesSource;
+            }).map((row) => (
               <tr key={row.id} className="hover:bg-card transition-colors cursor-pointer" onClick={() => onSelectSite(row)}>
                 <td className="px-6 py-4 font-medium text-text">{row.id}</td>
                 <td className="px-6 py-4">
@@ -140,6 +244,12 @@ export default function SiteListTable({ onSelectSite }) {
           </tbody>
         </table>
       </div>
+
+      <AddSiteModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onAdd={handleAddSite} 
+      />
     </div>
   );
 }

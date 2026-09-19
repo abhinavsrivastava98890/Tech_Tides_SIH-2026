@@ -151,7 +151,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-sky-100 to-blue-200 flex flex-col font-sans">
       
       {/* TOP HEADER */}
-      <header className="bg-navy text-white px-8 py-4 flex justify-between items-center shadow-md z-10 shrink-0">
+      <header className="bg-navy text-white px-4 sm:px-8 py-4 flex justify-between items-center shadow-md z-10 shrink-0">
         <div className="flex items-center">
           <Droplets 
             onClick={() => setShowAuth(true)} 
@@ -206,7 +206,7 @@ export default function HomePage() {
       </header>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
         <div className="max-w-6xl mx-auto space-y-8">
           
           {/* Status Section */}

@@ -22,14 +22,14 @@ export default function Analytics() {
           <h1 className="text-2xl font-bold text-text">Analytics & Reports</h1>
           <p className="text-sm text-muted mt-1">System-wide performance, water quality trends, and operational metrics.</p>
         </div>
-        <div className="mt-4 md:mt-0 flex space-x-3">
-           <select className="border border-border rounded-md text-sm px-3 py-2 bg-card text-slate-700">
+        <div className="mt-4 md:mt-0 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
+           <select className="border border-border rounded-md text-sm px-3 py-2 bg-card text-slate-700 w-full sm:w-auto">
              <option>Last 7 Days</option>
              <option>Last 30 Days</option>
              <option>This Quarter</option>
              <option>This Year</option>
            </select>
-           <button className="px-4 py-2 bg-card border border-border text-slate-700 rounded-md text-sm font-medium hover:bg-card transition-colors flex items-center shadow-sm">
+           <button className="px-4 py-2 bg-card border border-border text-slate-700 rounded-md text-sm font-medium hover:bg-card transition-colors flex items-center justify-center shadow-sm w-full sm:w-auto">
              <Download className="w-4 h-4 mr-2" /> Export Report
            </button>
         </div>

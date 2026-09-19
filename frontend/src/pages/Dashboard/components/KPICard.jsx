@@ -4,10 +4,10 @@ export default function KPICard({ title, value, subtitle, icon: Icon, colorClass
       <div className={`p-2 sm:p-3 rounded-full ${colorClass} bg-opacity-10 mr-3 sm:mr-4`}>
         <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${colorClass.replace('bg-', 'text-')}`} />
       </div>
-      <div>
-        <h3 className="text-xs sm:text-sm font-medium text-muted leading-tight">{title}</h3>
-        <div className="flex items-baseline mt-1">
-          <p className="text-xl sm:text-2xl font-semibold text-text">{value}</p>
+      <div className="min-w-0 flex-1">
+        <h3 className="text-xs sm:text-sm font-medium text-muted leading-tight break-words">{title}</h3>
+        <div className="flex items-baseline flex-wrap mt-1">
+          <p className="text-xl sm:text-2xl font-semibold text-text break-all">{value}</p>
           {subtitle && <p className="ml-1 sm:ml-2 text-xs sm:text-sm text-muted">{subtitle}</p>}
         </div>
       </div>

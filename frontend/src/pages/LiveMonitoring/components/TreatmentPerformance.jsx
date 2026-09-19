@@ -24,7 +24,7 @@ export default function TreatmentPerformance({ parameter, inlet, outlet, unit, r
         <div className="flex-1 px-4">
           <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex">
             <div className="bg-slate-300 h-full" style={{ width: '40%' }}></div>
-            <div className={`h-full ${isWarning ? 'bg-warning' : 'bg-teal'}`} style={{ width: '60%' }}></div>
+            <div className={`h-full transition-all duration-500 ${isWarning ? 'bg-gradient-to-r from-amber-400 to-orange-500' : 'bg-gradient-to-r from-teal-400 to-emerald-500'}`} style={{ width: '60%' }}></div>
           </div>
         </div>
 

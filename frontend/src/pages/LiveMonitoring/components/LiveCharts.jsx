@@ -43,7 +43,7 @@ export default function LiveCharts() {
   }, []);
 
   return (
-    <div className="bg-card rounded-lg shadow-sm border border-border p-5 h-full">
+    <div className="bg-white/60 backdrop-blur-md rounded-lg shadow-sm border border-white/40 p-5">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-semibold text-slate-800">{t('live_event_stream')}</h3>
         <span className="text-xs text-slate-400">
@@ -70,9 +70,9 @@ export default function LiveCharts() {
               <Tooltip 
                 contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
               />
-              <Line yAxisId="left" type="monotone" dataKey="tds" name="TDS (ppm)" stroke="#1e3a8a" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} connectNulls />
-              <Line yAxisId="left" type="monotone" dataKey="turbidity" name="Turbidity (NTU)" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-              <Line yAxisId="right" type="monotone" dataKey="pH" name="pH" stroke="#0d9488" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+              <Line yAxisId="left" type="monotone" dataKey="tds" name="TDS (ppm)" stroke="#1e3a8a" strokeWidth={3} dot={false} activeDot={{ r: 6 }} connectNulls />
+              <Line yAxisId="left" type="monotone" dataKey="turbidity" name="Turbidity (NTU)" stroke="#f59e0b" strokeWidth={3} dot={false} activeDot={{ r: 6 }} connectNulls />
+              <Line yAxisId="right" type="monotone" dataKey="pH" name="pH" stroke="#0d9488" strokeWidth={3} dot={false} activeDot={{ r: 6 }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         )}

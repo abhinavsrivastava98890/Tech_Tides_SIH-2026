@@ -99,10 +99,10 @@ export default function LiveMonitoring() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="bg-card rounded-lg shadow-sm border border-border p-5 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+      <div className="bg-white/40 backdrop-blur-md rounded-lg shadow-lg border border-white/40 p-5 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
           <div className="flex items-center space-x-3 mb-1">
-            <h1 className="text-2xl font-bold text-text">{t('live_monitoring')}</h1>
+            <h1 className="text-2xl font-bold text-text">{t('page_live_monitoring')}</h1>
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${
               sensorData ? 'bg-green-100 text-green-700 border-green-200' : 'bg-slate-100 text-muted border-border'
             }`}>
@@ -114,7 +114,7 @@ export default function LiveMonitoring() {
             <span>{t('last_data')} {getTimeAgo()}</span>
           </div>
         </div>
-        <div className="mt-4 md:mt-0 flex items-center space-x-4 text-sm">
+        <div className="mt-4 md:mt-0 flex flex-wrap gap-4 items-center text-sm w-full md:w-auto">
           <div className="flex items-center text-muted">
             <RefreshCw className={`w-4 h-4 mr-2 ${sensorData ? 'animate-spin-slow' : ''}`} />
             {t('last_heartbeat')} {sensorData ? getTimeAgo() : 'N/A'}
@@ -157,7 +157,7 @@ export default function LiveMonitoring() {
               </div>
             )}
           </div>
-          <button className="bg-card border border-border text-slate-700 px-4 py-2 rounded-md hover:bg-card transition-colors font-medium shadow-sm">
+          <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-md hover:from-blue-600 hover:to-indigo-700 transition-all font-medium shadow-md">
             {t('configure_unit')}
           </button>
         </div>

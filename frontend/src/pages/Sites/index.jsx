@@ -6,7 +6,7 @@ export default function Sites() {
   const [selectedSite, setSelectedSite] = useState(null);
 
   return (
-    <div className="h-full bg-card">
+    <div className="h-full bg-transparent">
       {selectedSite ? (
         <SiteDetail site={selectedSite} onBack={() => setSelectedSite(null)} />
       ) : (

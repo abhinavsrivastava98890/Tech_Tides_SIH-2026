@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { telemetryService } from '../../../services/api';
+import { useTranslation } from 'react-i18next';
 
 // Fix for default marker icons in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -13,6 +14,7 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function NetworkStatusMap() {
+  const { t } = useTranslation();
   const jharkhandCenter = [23.6102, 85.2799]; // Approximate center of Jharkhand
   const [liveSite, setLiveSite] = useState(null);
 
@@ -42,7 +44,7 @@ export default function NetworkStatusMap() {
 
   return (
     <div className="bg-card p-4 rounded-lg shadow-sm border border-border">
-      <h3 className="text-lg font-semibold text-slate-800 mb-4">Network Status (Jharkhand)</h3>
+      <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('network_status_jharkhand')}</h3>
       <div className="h-[400px] w-full rounded-md overflow-hidden border border-border">
         <MapContainer center={jharkhandCenter} zoom={7} style={{ height: '100%', w: '100%' }}>
           <TileLayer
@@ -62,11 +64,11 @@ export default function NetworkStatusMap() {
         </MapContainer>
       </div>
       <div className="flex gap-4 mt-4 text-sm text-muted">
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-success mr-2"></span>Normal</span>
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-warning mr-2"></span>Warning</span>
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-warning mr-2"></span>Maintenance</span>
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-danger mr-2"></span>Critical</span>
-        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-status-offline mr-2"></span>Offline</span>
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-success mr-2"></span>{t('status_normal')}</span>
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-warning mr-2"></span>{t('status_warning')}</span>
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-warning mr-2"></span>{t('status_maintenance')}</span>
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-danger mr-2"></span>{t('status_critical')}</span>
+        <span className="flex items-center"><span className="w-3 h-3 rounded-full bg-status-offline mr-2"></span>{t('status_offline')}</span>
       </div>
     </div>
   );

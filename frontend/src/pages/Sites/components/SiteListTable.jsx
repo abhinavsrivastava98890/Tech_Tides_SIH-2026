@@ -8,12 +8,20 @@ export default function SiteListTable({ onSelectSite }) {
   const [sites, setSites] = useState([]);
   const [addedSites, setAddedSites] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingSite, setEditingSite] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [dropdownState, setDropdownState] = useState({ id: null, top: 0, right: 0 });
   const [filters, setFilters] = useState({
     unitStatus: 'All',
     waterQuality: 'All',
     sourceType: 'All'
   });
+
+  useEffect(() => {
+    const handleClickOutside = () => setDropdownState({ id: null, top: 0, right: 0 });
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchSites = async () => {
@@ -67,7 +75,24 @@ export default function SiteListTable({ onSelectSite }) {
       lastTest: 'Never'
     };
     // Append to sites state so it shows up immediately
-    setSites(prev => [...prev, newSite]);
+    setSites(prev => [newSite, ...prev]);
+  };
+
+  const handleEditSite = (formData) => {
+    setSites(prev => prev.map(s => {
+      if (s.id === formData.siteId) {
+        return {
+          ...s,
+          village: formData.village,
+          district: formData.district,
+          block: formData.block,
+          source: formData.sourceType,
+          population: parseInt(formData.population, 10) || 0,
+        };
+      }
+      return s;
+    }));
+    setEditingSite(null);
   };
 
   const StatusBadge = ({ status }) => {
@@ -235,9 +260,34 @@ export default function SiteListTable({ onSelectSite }) {
                 <td className="px-6 py-4"><StatusBadge status={row.water} /></td>
                 <td className="px-6 py-4 text-muted">{row.lastTest}</td>
                 <td className="px-6 py-4 text-right">
-                  <button className="text-slate-400 hover:text-muted p-1" onClick={(e) => { e.stopPropagation(); }}>
+                  <button 
+                    className="text-slate-400 hover:text-slate-600 p-1 rounded hover:bg-slate-100 transition-colors" 
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setDropdownState({ 
+                        id: dropdownState.id === row.id ? null : row.id,
+                        top: rect.bottom,
+                        right: window.innerWidth - rect.right
+                      });
+                    }}
+                  >
                     <MoreVertical className="w-5 h-5" />
                   </button>
+                  {dropdownState.id === row.id && (
+                    <div 
+                      className="fixed mt-1 w-36 bg-white rounded-md shadow-lg border border-slate-200 z-[9999] py-1" 
+                      style={{ top: dropdownState.top, right: dropdownState.right }}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <button className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" onClick={() => { setDropdownState({ id: null }); onSelectSite(row); }}>View Details</button>
+                      <button className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" onClick={() => { setDropdownState({ id: null }); setEditingSite(row); }}>Edit Site</button>
+                      <button className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50" onClick={() => {
+                        setDropdownState({ id: null });
+                        setSites(prev => prev.filter(s => s.id !== row.id));
+                      }}>Delete</button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
@@ -250,6 +300,21 @@ export default function SiteListTable({ onSelectSite }) {
         onClose={() => setIsAddModalOpen(false)} 
         onAdd={handleAddSite} 
       />
+      {editingSite && (
+        <AddSiteModal 
+          isOpen={!!editingSite} 
+          onClose={() => setEditingSite(null)} 
+          onAdd={handleEditSite} 
+          initialData={{
+            siteId: editingSite.id,
+            village: editingSite.village,
+            district: editingSite.district,
+            block: editingSite.block,
+            sourceType: editingSite.source,
+            population: editingSite.population
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import WaterSafetyStatus from './components/WaterSafetyStatus';
 import TreatmentPerformance from './components/TreatmentPerformance';
 import DeviceHealth from './components/DeviceHealth';
 import LiveCharts from './components/LiveCharts';
+import ConfigureUnitModal from './components/ConfigureUnitModal';
 import { telemetryService } from '../../services/api';
 import usePushNotifications from '../../hooks/usePushNotifications';
 
@@ -51,6 +52,7 @@ export default function LiveMonitoring() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [deviceId, setDeviceId] = useState('--');
   const [loading, setLoading] = useState(true);
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
   const { isSubscribed, isLoading, toggleSubscription } = usePushNotifications();
   const [isLangOpen, setIsLangOpen] = useState(false);
   const { t, i18n } = useTranslation();
@@ -157,7 +159,10 @@ export default function LiveMonitoring() {
               </div>
             )}
           </div>
-          <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-md hover:from-blue-600 hover:to-indigo-700 transition-all font-medium shadow-md">
+          <button 
+            onClick={() => setIsConfigOpen(true)}
+            className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-md hover:from-blue-600 hover:to-indigo-700 transition-all font-medium shadow-md"
+          >
             {t('configure_unit')}
           </button>
         </div>
@@ -251,6 +256,12 @@ export default function LiveMonitoring() {
           <DeviceHealth />
         </div>
       </div>
+
+      <ConfigureUnitModal 
+        isOpen={isConfigOpen} 
+        onClose={() => setIsConfigOpen(false)} 
+        deviceId={deviceId} 
+      />
     </div>
   );
 }

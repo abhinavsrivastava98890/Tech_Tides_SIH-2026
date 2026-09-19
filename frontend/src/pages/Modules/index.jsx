@@ -1,8 +1,12 @@
 import { Settings2, Zap, AlertTriangle, ShieldCheck, Cpu, Droplet, Filter, Beaker, FlaskConical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import ModuleConfigModal from './components/ModuleConfigModal';
 
 export default function Modules() {
   const { t } = useTranslation();
+  const [selectedModule, setSelectedModule] = useState(null);
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
 
   const modules = [
     { id: 'MOD-FL-22', type: t('Fluoride Removal'), status: t('Active'), life: 45, site: 'JR-DH-01' },
@@ -72,7 +76,13 @@ export default function Modules() {
                 </div>
                 
                 <div className="mt-3 sm:mt-5 pt-3 sm:pt-4 border-t border-slate-100 flex justify-end">
-                  <button className="text-xs sm:text-sm text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center">
+                  <button 
+                    onClick={() => {
+                      setSelectedModule(mod);
+                      setIsConfigModalOpen(true);
+                    }}
+                    className="text-xs sm:text-sm text-blue-600 font-semibold hover:text-blue-800 transition-colors flex items-center"
+                  >
                     <Settings2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" /> {t('Configuration')}
                   </button>
                 </div>
@@ -142,6 +152,12 @@ export default function Modules() {
           </div>
         </div>
       </div>
+      
+      <ModuleConfigModal 
+        isOpen={isConfigModalOpen}
+        onClose={() => setIsConfigModalOpen(false)}
+        moduleData={selectedModule}
+      />
     </div>
   );
 }

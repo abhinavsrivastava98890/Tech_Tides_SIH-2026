@@ -41,13 +41,7 @@ export default function Topbar({ onMenuClick }) {
           <span>{t('location_all_sites')}</span>
         </div>
 
-        {/* Connection Status */}
-        <div className="flex items-center text-sm text-green-400">
-          <Wifi className="h-4 w-4 sm:mr-1" />
-          <span className="font-medium hidden md:inline-block">{t('system_online')}</span>
-        </div>
 
-        <div className="w-px h-6 bg-white/10 hidden md:block"></div>
 
         {/* Notifications */}
         <div className="relative">

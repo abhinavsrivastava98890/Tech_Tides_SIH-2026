@@ -95,16 +95,16 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           <div className="space-y-2 mb-4">
             <Link 
               to="/"
-              className="flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-white/10 hover:text-white transition-colors text-slate-100"
+              className="flex items-center px-3 py-2 rounded-md text-sm font-medium bg-aqua/10 text-aqua hover:bg-aqua/20 hover:text-white transition-colors"
             >
-              <Home className="w-4 h-4 mr-3 shrink-0 text-slate-200" />
+              <Home className="w-4 h-4 mr-3 shrink-0 text-aqua" />
               {t('public_home_page_sidebar')}
             </Link>
             <button 
               onClick={handleLogout}
-              className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-red-500/20 hover:text-red-100 transition-colors text-left text-slate-100"
+              className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors text-left"
             >
-              <LogOut className="w-4 h-4 mr-3 shrink-0 text-slate-200" />
+              <LogOut className="w-4 h-4 mr-3 shrink-0 text-red-400" />
               {t('lock_session')}
             </button>
           </div>

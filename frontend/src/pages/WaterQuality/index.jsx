@@ -4,6 +4,7 @@ import { telemetryService } from '../../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useTranslation } from 'react-i18next';
+import { addBrandHeaderToPDF } from '../../utils/pdfHelper';
 
 const initialTestResults = [
   { id: 'TST-001', site: 'Site-A (North)', date: '2026-09-15', parameter: 'Fluoride', result: 1.2, limit: 1.5, status: 'Safe' },
@@ -113,9 +114,14 @@ export default function WaterQuality() {
     }
 
     const doc = new jsPDF();
-    doc.text("Water Quality Tests Report", 14, 15);
+    addBrandHeaderToPDF(doc, t);
     
-    const tableColumn = ["Test ID", "Site ID", "Date", "Parameter", "Result", "Limit", "Status"];
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text(t('water_quality_profiles') || "Water Quality Tests Report", 14, 40);
+    
+    const tableColumn = [t('test_id') || "Test ID", t('site_id') || "Site ID", "Date", t('parameter') || "Parameter", t('result') || "Result", t('limit') || "Limit", t('status') || "Status"];
     const tableRows = [];
 
     filteredTests.forEach(test => {
@@ -134,7 +140,9 @@ export default function WaterQuality() {
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
-      startY: 20,
+      startY: 45,
+      theme: 'grid',
+      headStyles: { fillColor: [13, 148, 136] }, // teal-600
     });
 
     doc.save(`water_quality_tests_${new Date().toISOString().split('T')[0]}.pdf`);

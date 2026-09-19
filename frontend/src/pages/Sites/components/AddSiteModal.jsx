@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import SearchableSelect from '../../../components/ui/SearchableSelect';
 import { getDistricts, getBlocks, getVillages } from '../../../utils/locationData';
 
-export default function AddSiteModal({ isOpen, onClose, onAdd }) {
+export default function AddSiteModal({ isOpen, onClose, onAdd, initialData }) {
   const [formData, setFormData] = useState({
     siteId: '',
     district: '',
@@ -12,6 +12,21 @@ export default function AddSiteModal({ isOpen, onClose, onAdd }) {
     sourceType: 'Borewell',
     population: ''
   });
+
+  useEffect(() => {
+    if (initialData && isOpen) {
+      setFormData(initialData);
+    } else if (isOpen) {
+      setFormData({
+        siteId: '',
+        district: '',
+        block: '',
+        village: '',
+        sourceType: 'Borewell',
+        population: ''
+      });
+    }
+  }, [initialData, isOpen]);
 
   if (!isOpen) return null;
 
@@ -41,7 +56,7 @@ export default function AddSiteModal({ isOpen, onClose, onAdd }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-800">Add New Site</h2>
+          <h2 className="text-lg font-semibold text-slate-800">{initialData ? 'Edit Site' : 'Add New Site'}</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
             <X className="w-5 h-5" />
           </button>
@@ -56,8 +71,9 @@ export default function AddSiteModal({ isOpen, onClose, onAdd }) {
                 required
                 value={formData.siteId}
                 onChange={(e) => setFormData({...formData, siteId: e.target.value})}
+                disabled={!!initialData}
                 placeholder="e.g. JR-UNIT-102"
-                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                className={`w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm ${initialData ? 'bg-slate-100 text-slate-500' : ''}`}
               />
             </div>
             
@@ -133,7 +149,7 @@ export default function AddSiteModal({ isOpen, onClose, onAdd }) {
               type="submit" 
               className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
             >
-              Save Site
+              {initialData ? 'Update Site' : 'Save Site'}
             </button>
           </div>
         </form>

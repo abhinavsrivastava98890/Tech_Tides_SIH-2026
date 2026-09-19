@@ -1,6 +1,9 @@
-export default function KPICard({ title, value, subtitle, icon: Icon, colorClass }) {
+export default function KPICard({ title, value, subtitle, icon: Icon, colorClass, onClick }) {
   return (
-    <div className="bg-card rounded-lg shadow-sm border border-border p-3 sm:p-5 flex items-center">
+    <div 
+      className={`bg-card rounded-lg shadow-sm border border-border p-3 sm:p-5 flex items-center ${onClick ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`}
+      onClick={onClick}
+    >
       <div className={`p-2 sm:p-3 rounded-full ${colorClass} bg-opacity-10 mr-3 sm:mr-4`}>
         <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${colorClass.replace('bg-', 'text-')}`} />
       </div>

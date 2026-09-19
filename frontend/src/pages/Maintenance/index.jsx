@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Wrench, CheckCircle, Clock, Calendar, Filter, Plus, AlertTriangle, X } from 'lucide-react';
+import { Wrench, CheckCircle, Clock, Calendar, Filter, Plus, AlertTriangle, X, List, CalendarDays } from 'lucide-react';
 
 const initialWorkOrders = [
   { id: 'WO-24-089', site: 'JR-DH-01', task: 'Replace Pre-Filter Cartridge', type: 'Preventive', status: 'Due Today', date: '01 Sep 2026', technician: 'Rahul K.' },
@@ -13,6 +13,7 @@ export default function Maintenance() {
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [filterStatus, setFilterStatus] = useState('All');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [viewMode, setViewMode] = useState('list');
 
   // New Work Order Form State
   const [newTask, setNewTask] = useState('');
@@ -95,7 +96,23 @@ export default function Maintenance() {
 
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 relative">
         <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
-          <h3 className="text-lg font-semibold text-slate-800">Active Work Orders</h3>
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-semibold text-slate-800">Active Work Orders</h3>
+            <div className="flex bg-slate-100 rounded-md p-0.5">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-2.5 py-1.5 rounded text-xs font-medium flex items-center gap-1.5 transition-colors ${viewMode === 'list' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                <List className="w-3.5 h-3.5" /> List
+              </button>
+              <button
+                onClick={() => setViewMode('calendar')}
+                className={`px-2.5 py-1.5 rounded text-xs font-medium flex items-center gap-1.5 transition-colors ${viewMode === 'calendar' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                <CalendarDays className="w-3.5 h-3.5" /> Calendar
+              </button>
+            </div>
+          </div>
           
           <div className="relative">
             <button 
@@ -124,6 +141,7 @@ export default function Maintenance() {
           </div>
         </div>
         
+        {viewMode === 'list' ? (
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
@@ -169,6 +187,82 @@ export default function Maintenance() {
             </tbody>
           </table>
         </div>
+        ) : (
+        <div className="p-4">
+          {(() => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const monthName = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            const parseDate = (dateStr) => {
+              const d = new Date(dateStr);
+              if (!isNaN(d.getTime())) return d.getDate();
+              return null;
+            };
+
+            const getOrdersForDay = (day) => {
+              return filteredOrders.filter(wo => {
+                const woDay = parseDate(wo.date);
+                return woDay === day;
+              });
+            };
+
+            const statusColor = (status) => {
+              if (status === 'Completed') return 'bg-emerald-500';
+              if (status === 'Overdue') return 'bg-red-500';
+              if (status === 'In Progress') return 'bg-orange-500';
+              return 'bg-blue-500';
+            };
+
+            const cells = [];
+            for (let i = 0; i < firstDay; i++) cells.push(null);
+            for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+            return (
+              <div>
+                <h4 className="text-center font-bold text-slate-800 text-lg mb-4">{monthName}</h4>
+                <div className="grid grid-cols-7 gap-px bg-slate-200 rounded-lg overflow-hidden border border-slate-200">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="bg-slate-50 py-2 text-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">{day}</div>
+                  ))}
+                  {cells.map((day, idx) => {
+                    const orders = day ? getOrdersForDay(day) : [];
+                    const isToday = day === now.getDate();
+                    return (
+                      <div key={idx} className={`bg-white min-h-[80px] p-1.5 ${!day ? 'bg-slate-50' : ''}`}>
+                        {day && (
+                          <>
+                            <span className={`text-xs font-semibold inline-flex items-center justify-center w-6 h-6 rounded-full mb-1 ${
+                              isToday ? 'bg-blue-600 text-white' : 'text-slate-600'
+                            }`}>{day}</span>
+                            <div className="space-y-0.5">
+                              {orders.map(wo => (
+                                <div key={wo.id} className="flex items-center gap-1 group/item cursor-pointer" title={`${wo.id}: ${wo.task}`}>
+                                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${statusColor(wo.status)}`}></span>
+                                  <span className="text-[10px] text-slate-600 truncate group-hover/item:text-blue-600">{wo.task.length > 18 ? wo.task.slice(0, 18) + '...' : wo.task}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-4 mt-4 justify-center text-xs text-slate-500">
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Due Today</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-500"></span> In Progress</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-500"></span> Overdue</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Completed</span>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+        )}
       </div>
 
       {/* Create Work Order Modal */}

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from 'react-i18next';
 import { telemetryService } from '../../../services/api';
 
 export default function LiveCharts() {
+  const { t } = useTranslation();
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,22 +43,22 @@ export default function LiveCharts() {
   }, []);
 
   return (
-    <div className="bg-card rounded-lg shadow-sm border border-border p-5 h-full">
+    <div className="bg-white/60 backdrop-blur-md rounded-lg shadow-sm border border-white/40 p-5">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-slate-800">Live Event Stream</h3>
+        <h3 className="text-lg font-semibold text-slate-800">{t('live_event_stream')}</h3>
         <span className="text-xs text-slate-400">
-          {chartData.length > 0 ? `${chartData.length} readings` : 'Waiting for data...'}
+          {chartData.length > 0 ? `${chartData.length} ${t('readings')}` : t('waiting_for_data')}
         </span>
       </div>
 
       <div className="h-[250px] w-full">
         {loading ? (
           <div className="flex items-center justify-center h-full text-slate-400">
-            Loading sensor history...
+            {t('loading_sensor_history')}
           </div>
         ) : chartData.length === 0 ? (
           <div className="flex items-center justify-center h-full text-slate-400">
-            No telemetry data available yet. Start the ESP32 to see live charts.
+            {t('no_telemetry_start_esp32')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
@@ -68,9 +70,9 @@ export default function LiveCharts() {
               <Tooltip 
                 contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
               />
-              <Line yAxisId="left" type="monotone" dataKey="tds" name="TDS (ppm)" stroke="#1e3a8a" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} connectNulls />
-              <Line yAxisId="left" type="monotone" dataKey="turbidity" name="Turbidity (NTU)" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-              <Line yAxisId="right" type="monotone" dataKey="pH" name="pH" stroke="#0d9488" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+              <Line yAxisId="left" type="monotone" dataKey="tds" name="TDS (ppm)" stroke="#1e3a8a" strokeWidth={3} dot={false} activeDot={{ r: 6 }} connectNulls />
+              <Line yAxisId="left" type="monotone" dataKey="turbidity" name="Turbidity (NTU)" stroke="#f59e0b" strokeWidth={3} dot={false} activeDot={{ r: 6 }} connectNulls />
+              <Line yAxisId="right" type="monotone" dataKey="pH" name="pH" stroke="#0d9488" strokeWidth={3} dot={false} activeDot={{ r: 6 }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         )}

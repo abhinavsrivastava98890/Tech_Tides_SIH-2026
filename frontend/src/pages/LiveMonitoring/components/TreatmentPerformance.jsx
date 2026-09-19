@@ -1,6 +1,8 @@
 import { Droplets } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function TreatmentPerformance({ parameter, inlet, outlet, unit, removalPercent, isWarning = false }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
       <div className="flex items-center justify-between mb-3">
@@ -9,25 +11,25 @@ export default function TreatmentPerformance({ parameter, inlet, outlet, unit, r
           {parameter}
         </h4>
         <span className={`text-xs font-bold px-2 py-1 rounded-full ${isWarning ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
-          {removalPercent}% Reduction
+          {removalPercent}% {t('reduction')}
         </span>
       </div>
       
       <div className="flex justify-between items-center text-sm">
         <div className="text-center">
-          <p className="text-muted mb-1">Inlet</p>
+          <p className="text-muted mb-1">{t('inlet')}</p>
           <p className="font-bold text-slate-800">{inlet} <span className="text-xs font-normal text-muted">{unit}</span></p>
         </div>
         
         <div className="flex-1 px-4">
           <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex">
             <div className="bg-slate-300 h-full" style={{ width: '40%' }}></div>
-            <div className={`h-full ${isWarning ? 'bg-warning' : 'bg-teal'}`} style={{ width: '60%' }}></div>
+            <div className={`h-full transition-all duration-500 ${isWarning ? 'bg-gradient-to-r from-amber-400 to-orange-500' : 'bg-gradient-to-r from-teal-400 to-emerald-500'}`} style={{ width: '60%' }}></div>
           </div>
         </div>
 
         <div className="text-center">
-          <p className="text-muted mb-1">Outlet</p>
+          <p className="text-muted mb-1">{t('outlet')}</p>
           <p className="font-bold text-slate-800">{outlet} <span className="text-xs font-normal text-muted">{unit}</span></p>
         </div>
       </div>

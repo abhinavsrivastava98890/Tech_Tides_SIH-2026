@@ -10,7 +10,7 @@ export default {
         background: '#F8FAFC',
         card: '#FFFFFF',
         primary: '#2563EB',
-        navy: '#0F172A',
+        navy: '#0C4A6E', // Deep ocean water blue
         aqua: '#0891B2',
         water: '#0891B2',
         success: '#16A34A',

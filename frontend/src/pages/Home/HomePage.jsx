@@ -281,11 +281,11 @@ export default function HomePage() {
                 status={getSensorStatus(data?.sensors?.tds, {warnMin:-1, warnMax:300, critMin:-1, critMax:500})} 
               />
               <SensorCard 
-                icon={Waves} 
-                label={t('flow_rate')} 
-                value={data?.sensors?.flowIn} 
-                unit="L/min" 
-                status={data?.sensors?.flowIn === 0 ? 'CRITICAL' : getSensorStatus(data?.sensors?.flowIn, {warnMin:1.0, warnMax:999, critMin:-1, critMax:999})} 
+                icon={Droplet} 
+                label="Inlet Flow" 
+                value={data?.sensors?.flowIn > 0 ? "Active" : "Inactive"} 
+                unit="" 
+                status={data?.sensors?.flowIn > 0 ? "SAFE" : "WARNING"} 
               />
             </div>
           </section>

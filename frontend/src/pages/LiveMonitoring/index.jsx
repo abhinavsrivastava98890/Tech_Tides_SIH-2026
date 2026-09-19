@@ -209,12 +209,11 @@ export default function LiveMonitoring() {
               trend="stable" 
             />
             <SensorCard 
-              title={t('flow_rate')} 
-              value={sensorData?.flowIn != null ? sensorData.flowIn.toFixed(2) : '--'} 
-              unit="L/min" 
-              normalRange="> 0.5" 
-              status={getSensorStatus('flow', sensorData?.flowIn)} 
-              time={sensorData ? t('online') : t('offline')} 
+              title="Inlet Flow" 
+              value={sensorData?.flowIn > 0 ? "Active" : "Inactive"} 
+              unit="" 
+              status={sensorData?.flowIn > 0 ? "safe" : "warning"} 
+              time={sensorData ? 'Live' : 'Offline'} 
               trend="stable" 
             />
           </div>

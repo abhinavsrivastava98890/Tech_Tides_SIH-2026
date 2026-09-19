@@ -57,6 +57,15 @@
 #define PIN_LED_BLUE        27    // RGB LED blue channel (220Ω resistor)
 #define PIN_BUZZER          14    // Active buzzer (HIGH = ON)
 
+// --- RGB LED Type ---
+// Set to 1 if your RGB LED is Common Anode (most common, has + in middle)
+// Set to 0 if your RGB LED is Common Cathode (- in middle)
+#define COMMON_ANODE        0     // Common Cathode LED: HIGH=ON, LOW=OFF
+
+// --- Buzzer Enable ---
+// Set to false to completely silence the buzzer (LED still shows alerts)
+#define BUZZER_ENABLED      true
+
 // I2C LCD uses default ESP32 I2C pins: SDA=21, SCL=22
 
 // ============================================================
@@ -166,6 +175,10 @@ unsigned long g_lastAlertTime_flow       = 0;
 // --- Buzzer State (non-blocking beep) ---
 bool g_buzzerOn = false;
 unsigned long g_lastBuzzerToggleMs = 0;
+
+// --- LED Blink State (for critical blinking) ---
+bool g_ledBlinkOn = false;
+unsigned long g_lastLedToggleMs = 0;
 
 // --- Alert Counter (for unique alert IDs) ---
 unsigned long g_alertCounter = 0;
@@ -277,15 +290,8 @@ float readPH() {
     // Realistic pH: 6.8 to 7.6
     return 6.8 + (random(0, 8) / 10.0);
 #else
-    int raw = getMedianAnalogRead(PIN_PH);
-    float voltage = raw * (VREF / ADC_RESOLUTION);
-
-    // If using a 5V pH sensor on a 3.3V ESP32, the neutral voltage drops (usually around 1.5V - 1.8V).
-    // You may need to adjust PH_NEUTRAL_VOLTAGE (defined as 2.5V above) based on your hardware.
-    float ph = 7.0 + ((PH_NEUTRAL_VOLTAGE - voltage) / PH_VOLTS_PER_UNIT);
-    if (ph < 0) ph = 0;
-    if (ph > 14) ph = 14;
-
+    // User requested to simulate pH between 6.5 and 7.0 due to hardware issues
+    float ph = 6.5 + (random(0, 6) / 10.0);
     return ph;
 #endif
 }
@@ -419,10 +425,18 @@ int checkThresholds() {
 }
 
 // --- Buzzer Control (non-blocking beep patterns) ---
+// Wiring: 5V → Buzzer(+), GPIO 14 → Buzzer(-)
+// Trick: Use pinMode(INPUT) to disconnect ground = complete silence even with 5V
+//        Use pinMode(OUTPUT)+LOW to connect ground = buzzer sounds
 void updateBuzzer(int severity) {
+#if !BUZZER_ENABLED
+    // Buzzer disabled — disconnect ground path completely
+    pinMode(PIN_BUZZER, INPUT);
+    return;
+#endif
     if (severity == 0) {
-        // NORMAL — buzzer OFF
-        digitalWrite(PIN_BUZZER, LOW);
+        // NORMAL — buzzer OFF (disconnect ground by making pin float)
+        pinMode(PIN_BUZZER, INPUT);
         g_buzzerOn = false;
         return;
     }
@@ -433,29 +447,56 @@ void updateBuzzer(int severity) {
     unsigned long now = millis();
     if (now - g_lastBuzzerToggleMs >= beepInterval) {
         g_buzzerOn = !g_buzzerOn;
-        digitalWrite(PIN_BUZZER, g_buzzerOn ? HIGH : LOW);
+        if (g_buzzerOn) {
+            // ON: connect ground path → current flows → buzzer sounds
+            pinMode(PIN_BUZZER, OUTPUT);
+            digitalWrite(PIN_BUZZER, LOW);
+        } else {
+            // OFF: disconnect ground → no current → silence
+            pinMode(PIN_BUZZER, INPUT);
+        }
         g_lastBuzzerToggleMs = now;
     }
 }
 
 // --- RGB LED Control based on severity ---
+// RED is dead on GPIO 25, using GREEN + BLUE only:
+//   NORMAL  = solid GREEN
+//   WARNING = solid BLUE
+//   CRITICAL = handled by updateLed() (BLUE fast blink)
 void setRGBLed(int severity) {
     switch (severity) {
         case 0:  // NORMAL — solid GREEN
-            analogWrite(PIN_LED_RED, 0);
-            analogWrite(PIN_LED_GREEN, 255);
-            analogWrite(PIN_LED_BLUE, 0);
+            digitalWrite(PIN_LED_RED,   LOW);
+            digitalWrite(PIN_LED_GREEN, HIGH);
+            digitalWrite(PIN_LED_BLUE,  LOW);
             break;
-        case 1:  // WARNING — solid YELLOW
-            analogWrite(PIN_LED_RED, 255);
-            analogWrite(PIN_LED_GREEN, 255);
-            analogWrite(PIN_LED_BLUE, 0);
+        case 1:  // WARNING — solid BLUE
+            digitalWrite(PIN_LED_RED,   LOW);
+            digitalWrite(PIN_LED_GREEN, LOW);
+            digitalWrite(PIN_LED_BLUE,  HIGH);
             break;
-        case 2:  // CRITICAL — solid RED
-            analogWrite(PIN_LED_RED, 255);
-            analogWrite(PIN_LED_GREEN, 0);
-            analogWrite(PIN_LED_BLUE, 0);
+        case 2:  // CRITICAL — don't set here, updateLed() handles blinking
+            digitalWrite(PIN_LED_RED,   LOW);
+            digitalWrite(PIN_LED_GREEN, LOW);
+            // BLUE handled by updateLed()
             break;
+    }
+}
+
+// --- LED Blink for CRITICAL (non-blocking, runs every loop) ---
+void updateLed(int severity) {
+    if (severity != 2) {
+        // Not critical, reset blink state
+        g_ledBlinkOn = false;
+        return;
+    }
+    // CRITICAL — fast blink BLUE (200ms interval)
+    unsigned long now = millis();
+    if (now - g_lastLedToggleMs >= 200) {
+        g_ledBlinkOn = !g_ledBlinkOn;
+        digitalWrite(PIN_LED_BLUE, g_ledBlinkOn ? HIGH : LOW);
+        g_lastLedToggleMs = now;
     }
 }
 
@@ -491,14 +532,15 @@ void updateLCD() {
             lcd.print(String(g_ph, 2) + "            ");
             break;
 
-        case 4:  // Flow + Status
-            lcd.print("Flow:           ");
+        case 4:  // Screen 5: Flow Status
+            lcd.setCursor(0, 0);
+            lcd.print("Water Flow:     ");
             lcd.setCursor(0, 1);
-            String statusLine = String(g_flowRate, 1) + "L/m ";
-            if (g_alertSeverity == 0) statusLine += "OK    ";
-            else if (g_alertSeverity == 1) statusLine += "WARN  ";
-            else statusLine += "ALERT!";
-            lcd.print(statusLine);
+            if (g_flowRate > 0) {
+                lcd.print("ACTIVE          ");
+            } else {
+                lcd.print("STOPPED         ");
+            }
             break;
     }
 }
@@ -701,14 +743,31 @@ void setup() {
     pinMode(PIN_LED_RED, OUTPUT);
     pinMode(PIN_LED_GREEN, OUTPUT);
     pinMode(PIN_LED_BLUE, OUTPUT);
-    analogWrite(PIN_LED_RED, 0);
-    analogWrite(PIN_LED_GREEN, 0);
-    analogWrite(PIN_LED_BLUE, 0);
+    digitalWrite(PIN_LED_RED, LOW);
+    digitalWrite(PIN_LED_GREEN, LOW);
+    digitalWrite(PIN_LED_BLUE, LOW);
     Serial.println("[LED] RGB LED initialized.");
+
+    // --- LED DIAGNOSTIC TEST (watch which color lights up for each pin) ---
+    Serial.println("[LED TEST] Testing RED on GPIO 25...");
+    digitalWrite(PIN_LED_RED, HIGH);
+    delay(1500);
+    digitalWrite(PIN_LED_RED, LOW);
+
+    Serial.println("[LED TEST] Testing GREEN on GPIO 26...");
+    digitalWrite(PIN_LED_GREEN, HIGH);
+    delay(1500);
+    digitalWrite(PIN_LED_GREEN, LOW);
+
+    Serial.println("[LED TEST] Testing BLUE on GPIO 27...");
+    digitalWrite(PIN_LED_BLUE, HIGH);
+    delay(1500);
+    digitalWrite(PIN_LED_BLUE, LOW);
+    Serial.println("[LED TEST] Done! Check which color lit for each GPIO above.");
 
     // --- Initialize Buzzer ---
     pinMode(PIN_BUZZER, OUTPUT);
-    digitalWrite(PIN_BUZZER, LOW);
+    digitalWrite(PIN_BUZZER, HIGH);  // HIGH = OFF for active-low buzzer
     Serial.println("[BUZZER] Buzzer initialized on GPIO 14.");
 
     // --- Initialize DS18B20 Temperature Sensor ---
@@ -787,9 +846,10 @@ void loop() {
     }
 
     // ----------------------------------------------------------
-    // 2. BUZZER UPDATE (runs every loop iteration for smooth beeping)
+    // 2. BUZZER + LED UPDATE (runs every loop iteration for smooth blinking)
     // ----------------------------------------------------------
     updateBuzzer(g_alertSeverity);
+    updateLed(g_alertSeverity);
 
     // ----------------------------------------------------------
     // 3. LCD DISPLAY CYCLE (every 3 seconds)

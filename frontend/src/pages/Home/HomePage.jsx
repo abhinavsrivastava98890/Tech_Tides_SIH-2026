@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   CheckCircle2, AlertTriangle, Wrench, Lock,
-  Droplets, Thermometer, FlaskConical, TestTube, Waves, Shield, Bell
+  Droplets, Droplet, Thermometer, FlaskConical, TestTube, Waves, Shield, Bell
 } from 'lucide-react';
 import { telemetryService } from '../../services/api';
 import SupervisorAuth from '../../components/SupervisorAuth';

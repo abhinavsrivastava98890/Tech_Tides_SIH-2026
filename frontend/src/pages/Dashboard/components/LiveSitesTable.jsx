@@ -34,7 +34,10 @@ const StatusBadge = ({ status }) => {
     </span>
   );
 };
+import { useTranslation } from 'react-i18next';
+
 export default function LiveSitesTable() {
+  const { t } = useTranslation();
   const [sites, setSites] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -84,20 +87,20 @@ export default function LiveSitesTable() {
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
       <div className="px-6 py-4 border-b border-border flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-slate-800">Live Sites</h3>
-        <button className="text-sm text-primary font-medium hover:underline">View All</button>
+        <h3 className="text-lg font-semibold text-slate-800">{t('live_sites')}</h3>
+        <button className="text-sm text-primary font-medium hover:underline">{t('view_all')}</button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="bg-card text-muted uppercase text-xs font-semibold">
             <tr>
-              <th className="px-6 py-3">Site ID</th>
-              <th className="px-6 py-3">Village / District</th>
-              <th className="px-6 py-3">Water Source</th>
-              <th className="px-6 py-3">Unit Status</th>
-              <th className="px-6 py-3">Water Quality</th>
-              <th className="px-6 py-3">Active Modules</th>
-              <th className="px-6 py-3">Action</th>
+              <th className="px-6 py-3">{t('site_id')}</th>
+              <th className="px-6 py-3">{t('village_district')}</th>
+              <th className="px-6 py-3">{t('water_source')}</th>
+              <th className="px-6 py-3">{t('unit_status')}</th>
+              <th className="px-6 py-3">{t('water_quality')}</th>
+              <th className="px-6 py-3">{t('active_modules')}</th>
+              <th className="px-6 py-3">{t('action')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -116,7 +119,7 @@ export default function LiveSitesTable() {
                 <td className="px-6 py-4"><StatusBadge status={row.water} /></td>
                 <td className="px-6 py-4 text-muted">{row.active}</td>
                 <td className="px-6 py-4">
-                  <button className="text-primary hover:text-primary font-medium">Details</button>
+                  <button className="text-primary hover:text-primary font-medium">{t('details')}</button>
                 </td>
               </tr>
             ))}

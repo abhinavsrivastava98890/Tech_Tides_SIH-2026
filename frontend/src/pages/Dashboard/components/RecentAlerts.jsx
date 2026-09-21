@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AlertOctagon, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
 import { alertService } from '../../../services/api';
+import { useTranslation } from 'react-i18next';
 
 export default function RecentAlerts() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,17 +31,17 @@ export default function RecentAlerts() {
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border p-5">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-slate-800">Recent Alerts</h3>
-        <button className="text-sm text-primary font-medium hover:underline">View All</button>
+        <h3 className="text-lg font-semibold text-slate-800">{t('recent_alerts')}</h3>
+        <button onClick={() => navigate('/supervisor/alerts')} className="text-sm text-primary font-medium hover:underline">{t('view_all')}</button>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[22rem] overflow-y-auto pr-2">
         {loading ? (
-          <div className="text-center py-4 text-sm text-muted">Loading alerts...</div>
+          <div className="text-center py-4 text-sm text-muted">{t('loading_alerts')}</div>
         ) : alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center bg-green-50 rounded-lg border border-green-100">
              <CheckCircle2 className="w-8 h-8 text-green-500 mb-2" />
-             <p className="text-sm font-medium text-green-800">System Normal</p>
-             <p className="text-xs text-green-600 mt-1">No active faults detected across the network.</p>
+             <p className="text-sm font-medium text-green-800">{t('system_normal')}</p>
+             <p className="text-xs text-green-600 mt-1">{t('no_active_faults')}</p>
           </div>
         ) : (
           alerts.map(alert => {

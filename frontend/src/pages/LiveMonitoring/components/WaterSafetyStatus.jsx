@@ -1,33 +1,30 @@
 import { ShieldCheck, AlertTriangle, ShieldAlert, WifiOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function WaterSafetyStatus({ status = 'safe' }) {
+  const { t } = useTranslation();
   let Icon = ShieldCheck;
-  let text = "SAFE TO DRINK";
-  let hindiText = "पानी सुरक्षित है";
-  let colorClass = "bg-success text-white";
+  let textKey = "safe_to_drink";
+  let colorClass = "border border-emerald-200 shadow-emerald-500/10 text-emerald-600";
   
   if (status === 'warning') {
     Icon = AlertTriangle;
-    text = "ATTENTION REQUIRED";
-    hindiText = "फ़िल्टर की जाँच आवश्यक है";
-    colorClass = "bg-warning text-text";
+    textKey = "attention_required";
+    colorClass = "border border-amber-300 shadow-amber-500/10 text-amber-600";
   } else if (status === 'critical') {
     Icon = ShieldAlert;
-    text = "DO NOT DRINK";
-    hindiText = "सावधान! यह पानी पीने के लिए सुरक्षित नहीं है।";
-    colorClass = "bg-danger text-white";
+    textKey = "do_not_drink";
+    colorClass = "border-2 border-red-400 shadow-red-500/20 text-red-600";
   } else if (status === 'offline') {
     Icon = WifiOff;
-    text = "SENSOR OFFLINE";
-    hindiText = "सेंसर काम नहीं कर रहा है";
-    colorClass = "bg-status-offline text-white";
+    textKey = "sensor_offline";
+    colorClass = "border border-slate-200 shadow-slate-500/5 text-slate-500";
   }
 
   return (
-    <div className={`rounded-xl p-6 flex flex-col items-center justify-center shadow-md ${colorClass} h-full`}>
-      <Icon className="w-20 h-20 mb-4 opacity-90" />
-      <h2 className="text-3xl font-black tracking-wider mb-2 text-center">{text}</h2>
-      <p className="text-xl font-medium opacity-90 text-center">{hindiText}</p>
+    <div className={`bg-white/60 backdrop-blur-md rounded-xl p-6 flex flex-col items-center justify-center shadow-lg h-full transition-all duration-300 hover:shadow-xl ${colorClass}`}>
+      <Icon className={`w-20 h-20 mb-4 opacity-90 ${status === 'critical' ? 'animate-pulse' : ''}`} />
+      <h2 className="text-3xl font-black tracking-wider mb-2 text-center">{t(textKey)}</h2>
     </div>
   );
 }
